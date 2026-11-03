@@ -4,7 +4,8 @@ Used to find out why detail pages fail from GitHub Actions runners while they
 work locally. Prints only status codes, content types and response sizes –
 never posting content – so the output is safe to keep in public CI logs.
 
-Usage: python scripts/diagnose_api.py
+Usage: python scripts/diagnose_api.py            # endpoint variants
+       python scripts/diagnose_api.py --burst 40 1  # 40 details, 1 s apart
 """
 
 from __future__ import annotations
@@ -71,5 +72,46 @@ def main() -> None:
             probe(label, base + path.format(enc=enc), headers)
 
 
+def burst(n: int, pause: float) -> None:
+    """Fetch ``n`` details in a row like the pipeline does and print the status sequence.
+
+    Then waits and retries the first failure, to tell rate limiting apart from
+    postings that really are gone.
+    """
+    cfg = load_config()
+    api = cfg["api"]
+    headers = {"X-API-Key": api["client_id"], "User-Agent": "hamburg-werkstudent-dashboard (portfolio project)"}
+    refs: set[str] = set()
+    for term in cfg["search"]["terms"]:
+        time.sleep(1.0)
+        data = requests.get(api["base_url"] + api["search_path"], headers=headers, timeout=30, params={
+            "was": term, "wo": cfg["search"]["location"], "umkreis": cfg["search"]["radius_km"],
+            "size": 50, "page": 1}).json()
+        refs.update(j["referenznummer"] for j in data.get("ergebnisliste", []))
+    ordered = sorted(refs)[:n]
+    print(f"Burst: {len(ordered)} details, {pause}s apart")
+    codes: list[int] = []
+    for i, refnr in enumerate(ordered):
+        time.sleep(pause)
+        enc = base64.b64encode(refnr.encode()).decode()
+        resp = requests.get(f"{api['base_url']}{api['detail_path']}/{enc}", headers=headers, timeout=30)
+        codes.append(resp.status_code)
+        if resp.status_code != 200 and codes.count(resp.status_code) == 1:
+            retry_after = resp.headers.get("retry-after", "-")
+            print(f"  first {resp.status_code} at request {i + 1} (retry-after: {retry_after})")
+    print("  sequence:", " ".join(str(c) for c in codes))
+    failed = [r for r, c in zip(ordered, codes) if c != 200]
+    if failed:
+        print("  waiting 60s, then retrying the first failure …")
+        time.sleep(60)
+        enc = base64.b64encode(failed[0].encode()).decode()
+        resp = requests.get(f"{api['base_url']}{api['detail_path']}/{enc}", headers=headers, timeout=30)
+        print(f"  retry after 60s: {resp.status_code}")
+
+
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1 and sys.argv[1] == "--burst":
+        burst(int(sys.argv[2]) if len(sys.argv) > 2 else 40,
+              float(sys.argv[3]) if len(sys.argv) > 3 else 1.0)
+    else:
+        main()

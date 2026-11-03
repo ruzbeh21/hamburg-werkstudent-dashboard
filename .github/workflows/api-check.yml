@@ -20,3 +20,5 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - run: python scripts/diagnose_api.py
+      - name: Burst test (40 details in a row, like the pipeline)
+        run: python scripts/diagnose_api.py --burst 40 1.0
