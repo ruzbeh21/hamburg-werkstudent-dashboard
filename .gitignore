@@ -1,0 +1,14 @@
+# Raw API responses can contain recruiter names, emails and phone numbers.
+# They stay local only; the pipeline scrubs them before anything is exported.
+data/raw/
+data/interim/
+data/*.db
+# Exception: CI history database – descriptions stripped, checked by scripts/check_privacy.py
+!data/history.db
+data/*.sqlite
+
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.DS_Store

@@ -1,0 +1,30 @@
+# Approximate mapping from Hamburg postcodes to the seven Bezirke.
+# Postcode areas do not follow district borders exactly, so a few postings
+# may be assigned to a neighbouring district. Postcodes outside Hamburg keep
+# their town name as "district".
+ranges:
+  - [20095, 20099, "Hamburg-Mitte"]
+  - [20144, 20149, "Eimsbüttel"]
+  - [20249, 20253, "Hamburg-Nord"]
+  - [20255, 20259, "Eimsbüttel"]
+  - [20354, 20359, "Hamburg-Mitte"]
+  - [20457, 20459, "Hamburg-Mitte"]
+  - [20535, 20539, "Hamburg-Mitte"]
+  - [21029, 21039, "Bergedorf"]
+  - [21073, 21079, "Harburg"]
+  - [21107, 21109, "Hamburg-Mitte"]
+  - [21129, 21129, "Hamburg-Mitte"]
+  - [21147, 21149, "Harburg"]
+  - [22041, 22049, "Wandsbek"]
+  - [22081, 22086, "Hamburg-Nord"]
+  - [22087, 22087, "Hamburg-Mitte"]
+  - [22089, 22089, "Wandsbek"]
+  - [22111, 22119, "Hamburg-Mitte"]
+  - [22143, 22179, "Wandsbek"]
+  - [22297, 22339, "Hamburg-Nord"]
+  - [22359, 22399, "Wandsbek"]
+  - [22415, 22419, "Hamburg-Nord"]
+  - [22453, 22459, "Eimsbüttel"]
+  - [22523, 22529, "Eimsbüttel"]
+  - [22547, 22609, "Altona"]
+  - [22761, 22769, "Altona"]

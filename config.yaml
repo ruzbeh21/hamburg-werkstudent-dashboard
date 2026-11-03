@@ -1,0 +1,42 @@
+# Search configuration for the Bundesagentur für Arbeit Jobsuche API.
+# Edit this file to change what gets collected; no code changes needed.
+
+api:
+  base_url: "https://rest.arbeitsagentur.de/jobboerse/jobsuche-service"
+  search_path: "/pc/v6/jobs"          # /pc/v4/jobs returns 403 since 2026; v6 is current
+  detail_path: "/pc/v4/jobdetails"    # expects base64(referenznummer)
+  # Public client id published in the official docs. Not a secret, but it can be
+  # overridden with the JOBSUCHE_API_KEY environment variable.
+  client_id: "jobboerse-jobsuche"
+  timeout_seconds: 30
+  sleep_seconds: 1.0                  # pause between every request (rate limiting)
+  max_retries: 3
+
+search:
+  location: "Hamburg"
+  radius_km: 25
+  published_since_days: 100           # API maximum
+  page_size: 50
+  max_pages_per_term: 10
+  terms:
+    - "Werkstudent Informatik"
+    - "Werkstudent IT"
+    - "Werkstudent Data"
+    - "Werkstudent Software"
+    - "Werkstudent KI"
+    - "Working Student"
+
+details:
+  fetch: true
+  # Details are cached by reference number, so daily runs only fetch new postings.
+
+paths:
+  raw_dir: "data/raw"
+  database: "data/jobs.db"
+  export_dir: "docs/data"
+
+database:
+  # Description texts are only needed for skill extraction. Locally they are
+  # kept for SQL exploration; the CI workflow sets KEEP_DESCRIPTIONS=false so the
+  # committed history database (data/history.db) never contains ad texts.
+  keep_descriptions: true

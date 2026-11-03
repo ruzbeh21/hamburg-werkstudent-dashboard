@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Werkstudenten-Jobmarkt Hamburg</title>
+  <meta name="description" content="Interaktives Dashboard zu Werkstudenten-Stellen in IT, Data und Software in Hamburg – Daten aus der Jobsuche-API der Bundesagentur für Arbeit.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231f3a93'/%3E%3Cpath d='M8 22V14M14 22V9M20 22V16M26 22V12' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <script>
+    // Apply the saved theme before first paint to avoid a flash.
+    try {
+      const t = localStorage.getItem("theme");
+      if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+    } catch (e) { /* storage unavailable: follow the OS setting */ }
+  </script>
+  <link rel="stylesheet" href="assets/style.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/plotly.js-cartesian-dist-min@2.35.2/plotly-cartesian.min.js"
+          integrity="sha384-gKF7EaMDoWW1zLWkouldmVWF5jqEKrAswAciW73iNzqlomabVVPO60XkJvL5q/Ie"
+          crossorigin="anonymous"></script>
+  <script defer src="assets/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Zum Inhalt springen</a>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="title-block">
+        <p class="eyebrow" data-i18n="eyebrow">Datenprojekt · Python · SQL · Visualisierung</p>
+        <h1 data-i18n="title">Werkstudenten-Jobmarkt Hamburg</h1>
+        <p class="lede" data-i18n="lede">Welche Skills suchen Hamburger Unternehmen bei Werkstudierenden in IT, Data und Software? Täglich gesammelt aus der Jobsuche-API der Bundesagentur für Arbeit.</p>
+        <p class="updated"><span data-i18n="updated">Zuletzt aktualisiert</span>: <time id="last-updated">–</time></p>
+      </div>
+      <div class="controls" role="group" aria-label="Ansicht" data-i18n-aria="controls">
+        <div class="segmented" role="radiogroup" aria-label="Stellenauswahl" data-i18n-aria="scopeLabel">
+          <button type="button" role="radio" aria-checked="true" data-scope="all" data-i18n="scopeAll">Alle Stellen</button>
+          <button type="button" role="radio" aria-checked="false" data-scope="it" data-i18n="scopeIt">Nur IT-Rollen</button>
+        </div>
+        <div class="segmented" role="radiogroup" aria-label="Sprache / Language">
+          <button type="button" role="radio" aria-checked="true" data-lang="de" lang="de">DE</button>
+          <button type="button" role="radio" aria-checked="false" data-lang="en" lang="en">EN</button>
+        </div>
+        <button type="button" class="icon-btn" id="theme-toggle" aria-label="Farbschema wechseln" data-i18n-aria="themeToggle">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="wrap">
+    <p class="scope-note" id="scope-note" aria-live="polite"></p>
+
+    <section aria-labelledby="kpi-heading">
+      <h2 id="kpi-heading" class="visually-hidden" data-i18n="kpiHeading">Kennzahlen</h2>
+      <div class="kpis" id="kpis"></div>
+    </section>
+
+    <section class="grid" aria-label="Diagramme" data-i18n-aria="chartsLabel">
+      <article class="card span-2" id="card-skills">
+        <header class="card-head">
+          <h2 data-i18n="skillsTitle">Die 15 meistgefragten Skills</h2>
+          <p class="card-sub" data-i18n="skillsSub">Anteil der aktuellen Anzeigen, die den Skill in Titel oder Beschreibung nennen. Sprachen siehe unten.</p>
+        </header>
+        <div class="chart" id="chart-skills"></div>
+      </article>
+
+      <article class="card span-2" id="card-roles">
+        <header class="card-head">
+          <h2 data-i18n="rolesTitle">Skills nach Rollentyp</h2>
+          <p class="card-sub" data-i18n="rolesSub">Anteil der Anzeigen je Rollentyp, die den Skill nennen. Rollentyp per Schlüsselwort im Stellentitel – siehe „So funktioniert's“.</p>
+        </header>
+        <div class="chart" id="chart-roles"></div>
+      </article>
+
+      <article class="card" id="card-companies">
+        <header class="card-head">
+          <h2 data-i18n="companiesTitle">Unternehmen mit den meisten Anzeigen</h2>
+          <p class="card-sub" data-i18n="companiesSub">Aktuelle Anzeigen je Unternehmen (Top 15).</p>
+        </header>
+        <div class="chart" id="chart-companies"></div>
+      </article>
+
+      <article class="card" id="card-weekly">
+        <header class="card-head">
+          <h2 data-i18n="weeklyTitle">Neue Anzeigen pro Woche</h2>
+          <p class="card-sub" id="weekly-sub"></p>
+        </header>
+        <div class="chart" id="chart-weekly"></div>
+      </article>
+
+      <article class="card" id="card-hours">
+        <header class="card-head">
+          <h2 data-i18n="hoursTitle">Wochenstunden</h2>
+          <p class="card-sub" id="hours-sub"></p>
+        </header>
+        <div class="chart" id="chart-hours"></div>
+      </article>
+
+      <article class="card" id="card-languages">
+        <header class="card-head">
+          <h2 data-i18n="langTitle">Geforderte Sprachkenntnisse</h2>
+          <p class="card-sub" data-i18n="langSub">Höchstes genanntes Niveau je Anzeige. „Fließend“ und „verhandlungssicher“ zählen als C1.</p>
+        </header>
+        <div class="chart" id="chart-languages"></div>
+      </article>
+
+      <article class="card span-2" id="card-cooc">
+        <header class="card-head">
+          <h2 data-i18n="coocTitle">Welche Skills gemeinsam gefragt werden</h2>
+          <p class="card-sub" data-i18n="coocSub">Anzahl der Anzeigen, die beide Skills nennen – für die 10 häufigsten Skills. In Klammern: Anzeigen mit dem Skill insgesamt.</p>
+        </header>
+        <div class="chart" id="chart-cooc"></div>
+      </article>
+    </section>
+
+    <section class="card table-card" aria-labelledby="table-heading">
+      <header class="card-head">
+        <h2 id="table-heading" data-i18n="tableTitle">Aktuelle Stellenanzeigen</h2>
+        <p class="card-sub"><span id="table-count"></span> · <a href="data/postings.csv" download data-i18n="download">CSV herunterladen</a></p>
+      </header>
+      <div class="filters">
+        <label class="field grow">
+          <span data-i18n="search">Suche</span>
+          <input type="search" id="f-search" autocomplete="off" placeholder="z. B. Python, Airbus, Data" data-i18n-placeholder="searchPh">
+        </label>
+        <label class="field">
+          <span data-i18n="role">Rollentyp</span>
+          <select id="f-role"></select>
+        </label>
+        <label class="field">
+          <span data-i18n="skill">Skill</span>
+          <select id="f-skill"></select>
+        </label>
+        <label class="field">
+          <span data-i18n="workMode">Arbeitsmodell</span>
+          <select id="f-mode"></select>
+        </label>
+      </div>
+      <div class="table-wrap">
+        <table class="postings">
+          <thead>
+            <tr>
+              <th scope="col"><button type="button" data-sort="title" data-i18n="colTitle">Titel</button></th>
+              <th scope="col"><button type="button" data-sort="company" data-i18n="colCompany">Unternehmen</button></th>
+              <th scope="col"><button type="button" data-sort="posted_date" data-i18n="colDate">Veröffentlicht</button></th>
+              <th scope="col" data-i18n="colSkills">Skills</th>
+              <th scope="col"><span class="visually-hidden" data-i18n="colLink">Link</span></th>
+            </tr>
+          </thead>
+          <tbody id="postings-body"></tbody>
+        </table>
+        <p class="empty" id="table-empty" hidden data-i18n="noResults">Keine Anzeigen passen zu diesen Filtern.</p>
+      </div>
+      <button type="button" class="more-btn" id="show-more" hidden></button>
+    </section>
+
+    <section class="card how" aria-labelledby="how-heading" id="how">
+      <header class="card-head">
+        <h2 id="how-heading" data-i18n="howTitle">So funktioniert's</h2>
+        <p class="card-sub" data-i18n="howSub">Eine kleine Daten-Pipeline in Python, die täglich per GitHub Actions laufen kann.</p>
+      </header>
+      <ol class="pipeline">
+        <li><strong>API</strong><span data-i18n="p1">Jobsuche der Bundesagentur für Arbeit, 6 Suchbegriffe, Hamburg + 25 km</span></li>
+        <li><strong data-i18n="p2t">Roh-JSON</strong><span data-i18n="p2">Lokal zwischengespeichert, mit Zeitstempel, nicht im Repo</span></li>
+        <li><strong data-i18n="p3t">Bereinigung</strong><span data-i18n="p3">Duplikate, Firmennamen, Stunden, Remote, Kontaktdaten entfernt</span></li>
+        <li><strong>SQLite</strong><span data-i18n="p4">Tabellen postings, skills, posting_skills, runs</span></li>
+        <li><strong data-i18n="p5t">SQL-Abfragen</strong><span data-i18n="p5">Eine Datei je Kennzahl im Ordner queries/</span></li>
+        <li><strong>Dashboard</strong><span data-i18n="p6">Statische Seite auf GitHub Pages, liest kleine JSON-Dateien</span></li>
+      </ol>
+      <h3 data-i18n="methodTitle">Methodik und Grenzen</h3>
+      <ul class="method" id="method-list"></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <p><span data-i18n="source">Datenquelle</span>: <a href="https://jobsuche.api.bund.dev/" rel="noopener">Bundesagentur für Arbeit – Jobsuche-API</a> (via bund.dev).</p>
+      <p id="author-line"></p>
+    </div>
+  </footer>
+</body>
+</html>

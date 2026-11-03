@@ -1,0 +1,73 @@
+# Title-based role classification. Rules are checked top to bottom; the first
+# category with a matching keyword wins, everything else becomes "other".
+# Keywords are case-insensitive regular expressions matched against the title.
+categories:
+  - id: data
+    label_de: "Data / BI / KI"
+    label_en: "Data / BI / AI"
+    keywords:
+      - '\bdata\b'
+      - 'daten'
+      - 'analyt'
+      - 'business intelligence'
+      - '\bbi\b'
+      - 'power ?bi'
+      - 'reporting'
+      - '\bki\b'
+      - '\bai\b'
+      - 'artificial intelligence'
+      - 'künstliche intelligenz'
+      - 'machine learning'
+      - '\bml\b'
+  - id: software
+    label_de: "Softwareentwicklung"
+    label_en: "Software development"
+    keywords:
+      - 'software'
+      - '(?:software|web|app|anwendungs)entwickl'
+      - 'developer'
+      - 'programmier'
+      - 'frontend'
+      - 'backend'
+      - 'full.?stack'
+      - '\bweb\b'
+      - '\bapp\b'
+      - 'devops'
+      - 'software engineer'
+      - '\btest'
+      - '\bqa\b'
+      - 'informatik'
+      - 'java'
+      - 'python'
+      - '\bc#'
+      - '\.net\b'
+      - 'javascript'
+      - 'typescript'
+      - '\brpa\b'
+  - id: it_ops
+    label_de: "IT-Support / Betrieb / Security"
+    label_en: "IT support / ops / security"
+    keywords:
+      - '\bit\b'
+      - 'it-'
+      - 'support'
+      - 'service ?desk'
+      - 'help ?desk'
+      - 'security'
+      - 'sicherheit'
+      - 'administrat'
+      - 'netzwerk'
+      - 'network'
+      - 'infrastru'
+      - '\bsap\b'
+      - 'digitali'
+      - 'cloud'
+      - 'net-?sec'
+      - 'application management'
+      - '\bedi\b'
+      - '\bkis\b'
+      - 'technolog'
+other:
+  id: other
+  label_de: "Sonstige"
+  label_en: "Other"

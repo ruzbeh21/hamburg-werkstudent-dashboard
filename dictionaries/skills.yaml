@@ -1,0 +1,174 @@
+# Skill dictionary used by src/skills.py.
+#
+# Each skill has an id, display labels and a list of case-insensitive regular
+# expressions matched against title + description. Synonyms are just extra
+# patterns. Use (?-i:...) for a case-sensitive part (see "R").
+# To add a skill, append an entry – no code changes needed.
+#
+# Categories: programming, data, cloud, enterprise, tools, ai, it_ops, method, language
+
+skills:
+  # --- programming ---------------------------------------------------------
+  - id: python
+    label: Python
+    category: programming
+    patterns: ['\bpython\b', '\bpandas\b', '\bnumpy\b']
+  - id: java
+    label: Java
+    category: programming
+    patterns: ['\bjava\b(?!\s*-?\s*script)', '\bspring(?:\s*boot)?\b', '\bkotlin\b']
+  - id: csharp
+    label: "C# / .NET"
+    category: programming
+    patterns: ['(?<!\w)c#', '\.net\b', '\bc[- ]?sharp\b', '\basp\.net\b']
+  - id: cpp
+    label: "C / C++"
+    category: programming
+    patterns: ['(?<!\w)c\+\+', '\bembedded c\b']
+  - id: js_ts
+    label: "JavaScript / TypeScript"
+    category: programming
+    patterns: ['\bjava\s*-?\s*script\b', '\btypescript\b', '\bnode\.?js\b', '\breact\b', '\bangular\b', '\bvue(?:\.js)?\b']
+  - id: html_css
+    label: "HTML / CSS"
+    category: programming
+    patterns: ['\bhtml5?\b', '\bcss3?\b']
+  - id: php
+    label: PHP
+    category: programming
+    patterns: ['\bphp\b']
+  - id: r
+    label: R
+    category: programming
+    patterns: ['\brstudio\b', '(?-i:\bR\b)(?=\s*(?:,|/|\)|und\b|oder\b|or\b|and\b))']
+  - id: vba
+    label: "VBA / Makros"
+    category: programming
+    patterns: ['\bvba\b', '\bmakros?\b', '\bmacros?\b']
+
+  # --- data ------------------------------------------------------------------
+  - id: sql
+    label: SQL
+    category: data
+    patterns: ['\bsql\b', '\bmysql\b', '\bpostgre(?:s|sql)\b', '\bt-sql\b', '\bpl/sql\b', '\bsqlite\b']
+  - id: power_bi
+    label: Power BI
+    category: data
+    patterns: ['\bpower\s?bi\b']
+  - id: tableau
+    label: Tableau
+    category: data
+    patterns: ['\btableau\b']
+  - id: excel
+    label: Excel
+    category: data
+    patterns: ['\bexcel\b', '\bspreadsheets?\b']
+  - id: bi_reporting
+    label: "BI / Reporting"
+    category: data
+    patterns: ['\bbusiness intelligence\b', '\breporting\b', '\bdashboards?\b', '\bkpis?\b']
+  - id: etl
+    label: "ETL / Data Engineering"
+    category: data
+    patterns: ['\betl\b', '\bdata engineering\b', '\bdata pipelines?\b', '\bdatenpipelines?\b', '\bdatabricks\b', '\bsnowflake\b', '\bspark\b']
+
+  # --- cloud / devops --------------------------------------------------------
+  - id: azure
+    label: Azure
+    category: cloud
+    patterns: ['\bazure\b']
+  - id: aws
+    label: AWS
+    category: cloud
+    patterns: ['\baws\b', '\bamazon web services\b']
+  - id: gcp
+    label: Google Cloud
+    category: cloud
+    patterns: ['\bgoogle cloud\b', '\bgcp\b']
+  - id: docker
+    label: "Docker / Kubernetes"
+    category: cloud
+    patterns: ['\bdocker\b', '\bkubernetes\b', '\bk8s\b', '\bcontainer(?:isierung|ization)?\b']
+  - id: git
+    label: Git
+    category: tools
+    patterns: ['\bgit\b', '\bgithub\b', '\bgitlab\b', '\bbitbucket\b']
+  - id: ci_cd
+    label: "CI/CD"
+    category: cloud
+    patterns: ['\bci\s*/\s*cd\b', '\bdevops\b', '\bjenkins\b']
+  - id: linux
+    label: Linux
+    category: it_ops
+    patterns: ['\blinux\b', '\bunix\b', '\bbash\b', '\bshell[- ]?skript']
+
+  # --- enterprise software ---------------------------------------------------
+  - id: sap
+    label: SAP
+    category: enterprise
+    patterns: ['\bsap\b', '\bs/4\s?hana\b']
+  - id: power_platform
+    label: "Power Platform"
+    category: enterprise
+    patterns: ['\bpower\s?platform\b', '\bpower\s?apps\b', '\bpower\s?automate\b']
+  - id: ms_office
+    label: "MS Office / M365"
+    category: tools
+    patterns: ['\bms[- ]?office\b', '\bmicrosoft[- ]office\b', '\boffice[- ]?365\b', '\bm365\b', '\bmicrosoft 365\b', '\bms[- ]office[- ]paket']
+  - id: jira
+    label: "Jira / Confluence"
+    category: tools
+    patterns: ['\bjira\b', '\bconfluence\b']
+
+  # --- AI ----------------------------------------------------------------------
+  # Split on purpose: most ads mention using AI tools, only a few ask for ML skills.
+  - id: ai
+    label: "KI / GenAI"
+    category: ai
+    patterns: ['\bki\b', '\bai\b', '\bkünstliche[rn]? intelligenz\b', '\bartificial intelligence\b',
+               '\bllms?\b', '\bgen(?:erative)?\s?ai\b', '\bchatgpt\b', '\bcopilot\b', '\bgemini\b']
+  - id: ml
+    label: "Machine Learning"
+    category: ai
+    patterns: ['\bmachine learning\b', '\bmaschinelle[sn]? lernen\b', '\bdeep learning\b', '\bml\b',
+               '\bneuronale', '\bneural\b', '\bpytorch\b', '\btensorflow\b', '\bscikit']
+    # Not 'data science': in ads it is almost always a degree subject, not a skill.
+
+  # --- IT ops / security --------------------------------------------------------
+  - id: it_security
+    label: "IT-Security"
+    category: it_ops
+    patterns: ['\bit[- ]sicherheit\b', '\binformationssicherheit\b', '\bcyber\s?security\b', '\bit[- ]security\b',
+               '\biso\s?27001\b', '\bisms\b', '\bnetwork security\b']
+  - id: networking
+    label: "Netzwerke"
+    category: it_ops
+    # Plain "Netzwerk"/"networking" is avoided on purpose: in job ads it almost
+    # always means professional networking ("globales Netzwerk", "Networking-Events").
+    patterns: ['\bnetzwerk(?:technik|administration|infrastruktur|sicherheit|komponenten|protokolle)',
+               '\bnetzwerk-\s*(?:und|&)', '\bit-netzwerk', '\b(?:w?lan|wan)\b', '\btcp/ip\b',
+               '\bfirewalls?\b', '\brouting\b', '\bswitching\b', '\bcomputer networks?\b']
+  - id: windows_admin
+    label: "Windows / Active Directory"
+    category: it_ops
+    patterns: ['\bwindows\b', '\bactive directory\b', '\bintune\b']
+  - id: itil
+    label: "ITIL / IT-Service-Mgmt"
+    category: it_ops
+    patterns: ['\bitil\b', '\bit[- ]service[- ]management\b', '\bitsm\b', '\bservicenow\b']
+
+  # --- methods ---------------------------------------------------------------
+  - id: agile
+    label: "Agile / Scrum"
+    category: method
+    patterns: ['\bscrum\b', '\bagile?n?\b', '\bkanban\b']
+
+  # --- languages (levels are extracted separately) ---------------------------
+  - id: german
+    label: Deutsch
+    category: language
+    patterns: ['\bdeutsch(?:-|kenntnisse|e[nr]?\s+sprache|sprachig|\b)', '\bgerman\b']
+  - id: english
+    label: Englisch
+    category: language
+    patterns: ['\benglisch(?:-|kenntnisse|e[nr]?\s+sprache|sprachig|\b)', '\benglish\b']

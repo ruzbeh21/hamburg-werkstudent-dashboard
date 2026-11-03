@@ -1,0 +1,100 @@
+# Daily data update + GitHub Pages deployment.
+#
+# schedule / manual run : test → collect & rebuild → privacy check → commit data → deploy
+# push to main          : test → deploy (dashboard code changes go live without new data)
+#
+# One-time setup in the repository settings:
+#   Settings → Pages → Build and deployment → Source: "GitHub Actions"
+# Optional: Settings → Secrets → Actions → JOBSUCHE_API_KEY, only if the public
+# client id in config.yaml ever stops working.
+
+name: Pipeline
+
+on:
+  schedule:
+    - cron: "17 5 * * *"          # daily 05:17 UTC (≈ 06:17/07:17 in Hamburg)
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pipeline
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
+      - run: python scripts/check_privacy.py
+
+  update-data:
+    needs: test
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write             # commit the refreshed data back to main
+    env:
+      JOBS_DATABASE: data/history.db   # committed history, see .gitignore
+      KEEP_DESCRIPTIONS: "false"       # ad texts are used for skills, then dropped
+      JOBSUCHE_API_KEY: ${{ secrets.JOBSUCHE_API_KEY }}   # optional; empty → config default
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      - name: Collect, clean, load into SQLite, export JSON
+        run: python run.py
+
+      - name: Privacy check (exports and history database)
+        run: python scripts/check_privacy.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data data/history.db
+          if git diff --cached --quiet; then
+            echo "No data changes."
+          else
+            git commit -m "data: daily update $(date -u +%F)"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+  deploy:
+    needs: [test, update-data]
+    # Run after a successful update, or after tests alone on a push (update skipped).
+    if: always() && needs.test.result == 'success' && (needs.update-data.result == 'success' || needs.update-data.result == 'skipped')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main               # pick up the data commit made by update-data
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - id: deployment
+        uses: actions/deploy-pages@v4
