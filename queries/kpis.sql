@@ -33,4 +33,7 @@ SELECT
     ROUND(100.0 * (SELECT COUNT(*) FROM scope WHERE work_mode IN ('remote', 'hybrid'))
           / NULLIF((SELECT COUNT(*) FROM scope), 0), 1)                 AS remote_hybrid_pct,
     ROUND(100.0 * (SELECT COUNT(*) FROM scope WHERE hours_max IS NOT NULL)
-          / NULLIF((SELECT COUNT(*) FROM scope), 0), 1)                 AS hours_stated_pct;
+          / NULLIF((SELECT COUNT(*) FROM scope), 0), 1)                 AS hours_stated_pct,
+    -- share whose full text was analysed (skills/hours/languages need it)
+    ROUND(100.0 * (SELECT COUNT(*) FROM scope WHERE has_details = 1)
+          / NULLIF((SELECT COUNT(*) FROM scope), 0), 1)                 AS details_pct;

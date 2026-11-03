@@ -48,6 +48,7 @@ const I18N = {
     kpiRemoteHint: "Homeoffice erwähnt",
     skillsTitle: "Die 15 meistgefragten Skills",
     skillsSub: "Anteil der aktuellen Anzeigen, die den Skill in Titel oder Beschreibung nennen. Sprachen siehe unten.",
+    detailsNote: (pct) => `Hinweis: Nur für ${pct} der Anzeigen lag der vollständige Text vor – die Anteile sind daher eher zu niedrig.`,
     rolesTitle: "Skills nach Rollentyp",
     rolesSub: "Anteil der Anzeigen je Rollentyp, die den Skill nennen (Basis: IT-Rollen). Der Rollentyp wird per Schlüsselwort aus dem Stellentitel bestimmt – siehe „So funktioniert's“.",
     companiesTitle: "Unternehmen mit den meisten Anzeigen",
@@ -150,6 +151,7 @@ const I18N = {
     kpiRemoteHint: "home office mentioned",
     skillsTitle: "Top 15 requested skills",
     skillsSub: "Share of current postings that mention the skill in the title or description. Languages are shown below.",
+    detailsNote: (pct) => `Note: the full text was available for only ${pct} of postings, so shares are likely too low.`,
     rolesTitle: "Skills by role type",
     rolesSub: "Share of postings per role type that mention the skill (IT roles only). The role type comes from keywords in the job title – see “How it works”.",
     companiesTitle: "Companies with the most postings",
@@ -381,6 +383,9 @@ function horizontalBars(id, labels, values, texts, hovers, tok, xSuffix = "") {
 
 function renderSkills(tok) {
   const rows = state.data.top_skills[state.scope];
+  const detailsPct = state.data.kpis[state.scope].details_pct;
+  document.getElementById("skills-sub").textContent = t("skillsSub")
+    + (detailsPct != null && detailsPct < 99.5 ? ` ${t("detailsNote", fmtPct(detailsPct))}` : "");
   const labels = rows.map((r) => skillLabel(r.label));
   horizontalBars("chart-skills", labels, rows.map((r) => r.share_pct), rows.map((r) => fmtPct(r.share_pct)),
     rows.map((r, i) => `<b>${labels[i]}</b><br>${fmtNum(r.postings)} ${t("postings")} · ${fmtPct(r.share_pct)}`),

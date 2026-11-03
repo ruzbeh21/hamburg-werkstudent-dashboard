@@ -14,8 +14,10 @@ from __future__ import annotations
 import base64
 import json
 import logging
+import os
 import re
 import time
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -37,13 +39,18 @@ class JobsucheClient:
         self.timeout: float = api_cfg["timeout_seconds"]
         self.sleep: float = api_cfg["sleep_seconds"]
         self.max_retries: int = api_cfg["max_retries"]
+        self.headers = {
+            "X-API-Key": api_cfg["client_id"],
+            "User-Agent": "hamburg-werkstudent-dashboard (portfolio project)",
+        }
         self.session = requests.Session()
-        self.session.headers.update(
-            {
-                "X-API-Key": api_cfg["client_id"],
-                "User-Agent": "hamburg-werkstudent-dashboard (portfolio project)",
-            }
-        )
+        self.session.headers.update(self.headers)
+
+    def reset_session(self) -> None:
+        """Drop the connection pool and cookies and start a fresh session."""
+        self.session.close()
+        self.session = requests.Session()
+        self.session.headers.update(self.headers)
 
     def _get(self, url: str, params: dict[str, Any] | None = None) -> dict[str, Any] | None:
         """GET a URL and return parsed JSON, or ``None`` on a 404."""
@@ -107,22 +114,70 @@ def collect_term(client: JobsucheClient, term: str, search_cfg: dict[str, Any],
     return refs
 
 
-def collect_details(client: JobsucheClient, refs: set[str], details_dir: Path) -> int:
-    """Fetch details for reference numbers not cached yet; return how many were fetched."""
-    fetched = 0
+def collect_details(client: JobsucheClient, refs: set[str], details_dir: Path,
+                    retry_passes: int = 2, retry_wait: float = 30.0) -> Counter[str]:
+    """Fetch details for reference numbers not cached yet.
+
+    A posting that search returned seconds ago should have a detail page, so a
+    404 or error is retried in up to ``retry_passes`` extra passes, each after a
+    pause and with a fresh session. Returns counts of ``fetched``, ``cached``,
+    ``not_found`` and ``error`` (the last two after all retries).
+    """
+    stats: Counter[str] = Counter()
+    pending = []
     for refnr in sorted(refs):
-        target = details_dir / f"{slugify(refnr)}.json"
-        if target.exists():
-            continue
-        try:
-            detail = client.details(refnr)
-        except requests.RequestException as exc:
-            log.warning("Detail fetch failed for %s: %s", refnr, exc)
-            continue
-        if detail is not None:
-            write_json(target, detail)
-            fetched += 1
-    return fetched
+        if (details_dir / f"{slugify(refnr)}.json").exists():
+            stats["cached"] += 1
+        else:
+            pending.append(refnr)
+
+    outcome: dict[str, str] = {}
+    for attempt in range(retry_passes + 1):
+        if attempt:
+            if not pending:
+                break
+            log.info("Retrying %d missing details in %.0fs (pass %d)", len(pending), retry_wait, attempt)
+            time.sleep(retry_wait)
+            client.reset_session()
+        still_missing = []
+        for refnr in pending:
+            try:
+                detail = client.details(refnr)
+            except requests.RequestException as exc:
+                outcome[refnr] = "error"
+                log.debug("Detail fetch failed for %s: %s", refnr, exc)
+                still_missing.append(refnr)
+                continue
+            if detail is None:
+                outcome[refnr] = "not_found"
+                still_missing.append(refnr)
+                continue
+            write_json(details_dir / f"{slugify(refnr)}.json", detail)
+            stats["fetched"] += 1
+        pending = still_missing
+
+    for refnr in pending:
+        stats[outcome[refnr]] += 1
+    return stats
+
+
+def detail_coverage(stats: Counter[str]) -> float:
+    """Share of postings that have a detail page (fetched now or cached earlier)."""
+    total = sum(stats.values())
+    return (stats["fetched"] + stats["cached"]) / total if total else 1.0
+
+
+def warn_if_low_coverage(stats: Counter[str], threshold: float = 0.8) -> None:
+    """Log a warning – and a GitHub Actions annotation in CI – if many details are missing."""
+    coverage = detail_coverage(stats)
+    if coverage >= threshold:
+        return
+    message = (f"Only {coverage:.0%} of postings have a detail page "
+               f"({stats['not_found']} not found, {stats['error']} errors). "
+               "Skills for the missing postings will be extracted later or not at all.")
+    log.warning(message)
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        print(f"::warning title=Low detail coverage::{message}")
 
 
 def run() -> Path:
@@ -146,9 +201,11 @@ def run() -> Path:
         # and publish an empty dashboard. Fail loudly instead.
         raise RuntimeError("API returned no postings for any search term – aborting run")
 
-    details_fetched = 0
+    stats: Counter[str] = Counter()
     if cfg["details"]["fetch"]:
-        details_fetched = collect_details(client, all_refs, raw_dir / "details")
+        stats = collect_details(client, all_refs, raw_dir / "details",
+                                cfg["details"]["retry_passes"], cfg["details"]["retry_wait_seconds"])
+        warn_if_low_coverage(stats)
 
     write_json(run_dir / "manifest.json", {
         "started_at": started.isoformat(timespec="seconds"),
@@ -157,9 +214,11 @@ def run() -> Path:
         "radius_km": cfg["search"]["radius_km"],
         "postings_per_term": per_term,
         "unique_postings": len(all_refs),
-        "details_fetched": details_fetched,
+        "details_fetched": stats["fetched"],
+        "details": {key: stats[key] for key in ("fetched", "cached", "not_found", "error")},
     })
-    log.info("Unique postings: %d, new details fetched: %d", len(all_refs), details_fetched)
+    log.info("Unique postings: %d, details fetched %d, cached %d, not found %d, errors %d",
+             len(all_refs), stats["fetched"], stats["cached"], stats["not_found"], stats["error"])
     return run_dir
 
 

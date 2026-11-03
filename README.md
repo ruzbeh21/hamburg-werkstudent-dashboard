@@ -151,6 +151,8 @@ Search terms, location, radius and the request pause live in [`config.yaml`](con
 
 A push to `main` runs the tests and redeploys the dashboard without fetching new data.
 
+Each run logs how many detail pages were fetched, cached, not found or failed; missing ones are retried twice with a fresh connection, and if fewer than 80 % of postings have their full text, the run shows a warning annotation and the dashboard says so under the skills chart. The manual **API check** workflow ([`api-check.yml`](.github/workflows/api-check.yml), [`scripts/diagnose_api.py`](scripts/diagnose_api.py)) probes the endpoints from a GitHub runner and prints only status codes.
+
 **Setup:** *Settings → Pages → Source: GitHub Actions.* No secret is required; `JOBSUCHE_API_KEY` is optional.
 
 **Why a separate `history.db`?** Raw API responses are never committed, so CI needs the database itself to remember first-seen dates across days. CI runs with `KEEP_DESCRIPTIONS=false`: description texts are used for skill extraction and then deleted, and the file is VACUUMed. The committed database therefore contains no ad texts – only the same fields the dashboard already shows. The privacy check fails the build if any text remains.
@@ -180,7 +182,7 @@ A push to `main` runs the tests and redeploys the dashboard without fetching new
 ├── queries/                 schema.sql + one .sql file per metric
 ├── src/                     collect, clean, skills, db, analyse, config
 ├── scripts/check_privacy.py pre-publish check
-├── tests/                   pytest suite (81 tests)
+├── tests/                   pytest suite (86 tests)
 ├── docs/                    the dashboard (GitHub Pages root) + data/*.json
 ├── data/history.db          CI history (no ad texts); data/raw/ and data/jobs.db stay local
 ├── run.py, Makefile
@@ -189,7 +191,7 @@ A push to `main` runs the tests and redeploys the dashboard without fetching new
 
 ## Testing
 
-`make test` runs 81 pytest tests, including:
+`make test` runs 86 pytest tests, including:
 
 - **cleaning edge cases:** gender markers in titles (`Werkstudent*in`, `(m/w/d)`, `(gn)`), company suffixes ("Werk Bremen", "Abteilung …"), HTML entities, hours like "19,5 Std." or "zwischen 3 und 19,5", semester-break and internship clauses, multi-location postings
 - **deduplication:** across search terms, across runs, and monthly re-posts with new reference numbers
@@ -206,17 +208,18 @@ A push to `main` runs the tests and redeploys the dashboard without fetching new
 - **Look at the matches, not just the counts.** Every surprising number (19 % "networking", 11 % "machine learning") turned out to be a keyword problem. Reading the context of matches and writing a test for each false positive made the analysis trustworthy.
 - **Privacy is a pipeline property.** Contact data was in 22 of 102 raw descriptions. Scrubbing early, never exporting free text, and an automated check before each commit is more reliable than one manual review.
 - **Keep SQL as SQL.** Separate `.sql` files with CTEs (and a recursive CTE for empty weeks) are easier to read, test and show than queries hidden in Python strings.
+- **Make failures visible and read logs carefully.** A detail fetch that returned 404 used to be skipped silently, and I once misread a truncated log line ("fetched: 1" was really "102") and chased a non-existent API block. Now every run reports its detail coverage explicitly.
 - **Design for the incremental case.** Upserts by a stable key and recomputing derived columns let the same code run locally on full history and in CI with only today's data.
 
 ## CV / portfolio description
 
 **Deutsch:**
 > **Werkstudenten-Jobmarkt Hamburg – Daten-Dashboard** (Python, SQL/SQLite, Plotly, GitHub Actions): Automatisierte Pipeline, die täglich Stellenanzeigen über die Jobsuche-API der Bundesagentur für Arbeit sammelt, bereinigt, dedupliziert und datenschutzkonform in SQLite speichert.
-> Skill-Analyse mit transparentem Keyword-Wörterbuch und SQL-Abfragen, veröffentlicht als zweisprachiges, interaktives Dashboard auf GitHub Pages; 81 pytest-Tests.
+> Skill-Analyse mit transparentem Keyword-Wörterbuch und SQL-Abfragen, veröffentlicht als zweisprachiges, interaktives Dashboard auf GitHub Pages; 86 pytest-Tests.
 
 **English:**
 > **Hamburg Working-Student Job Market Dashboard** (Python, SQL/SQLite, Plotly, GitHub Actions): Automated pipeline that collects job postings daily from the German Federal Employment Agency's API, then cleans, deduplicates and stores them privacy-safely in SQLite.
-> Skill analysis with a transparent keyword dictionary and plain SQL, published as a bilingual interactive dashboard on GitHub Pages; 81 pytest tests.
+> Skill analysis with a transparent keyword dictionary and plain SQL, published as a bilingual interactive dashboard on GitHub Pages; 86 pytest tests.
 
 ## Attribution
 

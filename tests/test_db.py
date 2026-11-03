@@ -97,3 +97,35 @@ def test_drop_descriptions_leaves_no_text_in_file(tmp_path) -> None:
     drop_descriptions(db)
     db.close()
     assert b"GEHEIMER-TEXT" not in path.read_bytes()
+
+
+def test_missing_text_does_not_erase_earlier_findings(conn: sqlite3.Connection) -> None:
+    """A run without the detail text must not downgrade work mode, hours or has_details."""
+    upsert_postings(conn, [make_posting(id="A", work_mode="hybrid", hours_min=16, hours_max=20,
+                                        description="Hybrides Arbeiten, 16-20 Std./Woche")])
+    upsert_postings(conn, [make_posting(id="A", work_mode="not_stated", last_seen_date="2026-11-04",
+                                        description="")])
+    row = conn.execute("SELECT work_mode, hours_max, has_details, description, last_seen_date "
+                       "FROM postings").fetchone()
+    assert (row["work_mode"], row["hours_max"], row["has_details"]) == ("hybrid", 20, 1)
+    assert row["description"].startswith("Hybrides")       # kept, not blanked
+    assert row["last_seen_date"] == "2026-11-04"
+
+
+def test_migration_adds_has_details_to_old_database(tmp_path) -> None:
+    from src.db import SCHEMA_FILE, connect, init_schema
+    db = connect(tmp_path / "old.db")
+    # The schema as it was before has_details existed.
+    old_schema = "\n".join(line for line in SCHEMA_FILE.read_text().splitlines()
+                           if "has_details" not in line and "CHECK (has_details" not in line)
+    db.executescript(old_schema)
+    upsert_row = {"dedup_key": "x", "refnr": "A", "title": "t", "company": "c",
+                  "first_seen_date": "2026-11-01", "last_seen_date": "2026-11-01",
+                  "work_mode": "hybrid", "role_category": "other", "source_url": "u"}
+    db.execute(f"INSERT INTO postings ({', '.join(upsert_row)}) VALUES "
+               f"({', '.join('?' * len(upsert_row))})", list(upsert_row.values()))
+    assert "has_details" not in {r[1] for r in db.execute("PRAGMA table_info(postings)")}
+    init_schema(db)
+    columns = {r[1] for r in db.execute("PRAGMA table_info(postings)")}
+    assert "has_details" in columns
+    assert db.execute("SELECT has_details FROM postings").fetchone()[0] == 0

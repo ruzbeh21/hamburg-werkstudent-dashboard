@@ -28,7 +28,10 @@ search:
 
 details:
   fetch: true
-  # Details are cached by reference number, so daily runs only fetch new postings.
+  # Details are cached by reference number, so local daily runs only fetch new postings.
+  # Missing details (404 or error) are retried in extra passes with a fresh connection.
+  retry_passes: 2
+  retry_wait_seconds: 30
 
 paths:
   raw_dir: "data/raw"

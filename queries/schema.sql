@@ -39,6 +39,8 @@ CREATE TABLE IF NOT EXISTS postings (
     german_level    TEXT,                        -- C2, C1, B2, B1, mentioned or NULL
     english_level   TEXT,
     n_versions      INTEGER NOT NULL DEFAULT 1,
+    has_details     INTEGER NOT NULL DEFAULT 0   -- 1 once the full text was analysed
+                    CHECK (has_details IN (0, 1)),
     source_url      TEXT NOT NULL,
     description     TEXT                         -- scrubbed of contact data; never exported
 );

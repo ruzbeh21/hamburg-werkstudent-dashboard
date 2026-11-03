@@ -27,11 +27,11 @@ UPSERT_POSTING = """
 INSERT INTO postings (
     dedup_key, refnr, title, company, city, postcode, district, posted_date,
     first_seen_date, last_seen_date, offer_type, working_time, contract,
-    hours_min, hours_max, work_mode, role_category, n_versions, source_url, description
+    hours_min, hours_max, work_mode, role_category, n_versions, has_details, source_url, description
 ) VALUES (
     :dedup_key, :id, :title, :company, :city, :postcode, :district, :posted_date,
     :first_seen_date, :last_seen_date, :offer_type, :working_time, :contract,
-    :hours_min, :hours_max, :work_mode, :role_category, :n_versions, :source_url, :description
+    :hours_min, :hours_max, :work_mode, :role_category, :n_versions, :has_details, :source_url, :description
 )
 ON CONFLICT (dedup_key) DO UPDATE SET
     refnr           = excluded.refnr,
@@ -49,12 +49,15 @@ ON CONFLICT (dedup_key) DO UPDATE SET
     contract        = excluded.contract,
     hours_min       = COALESCE(excluded.hours_min, postings.hours_min),
     hours_max       = COALESCE(excluded.hours_max, postings.hours_max),
-    work_mode       = excluded.work_mode,
+    -- without the text this run, "not_stated" means "unknown": keep what the text said before
+    work_mode       = CASE WHEN excluded.has_details = 1 OR excluded.work_mode <> 'not_stated'
+                           THEN excluded.work_mode ELSE postings.work_mode END,
     n_versions      = CASE WHEN excluded.refnr = postings.refnr
                            THEN MAX(postings.n_versions, excluded.n_versions)
                            ELSE MAX(postings.n_versions + 1, excluded.n_versions) END,
+    has_details     = MAX(postings.has_details, excluded.has_details),
     source_url      = excluded.source_url,
-    description     = excluded.description
+    description     = COALESCE(excluded.description, postings.description)
 """
 
 
@@ -68,8 +71,21 @@ def connect(path: Path) -> sqlite3.Connection:
 
 
 def init_schema(conn: sqlite3.Connection, schema_file: Path = SCHEMA_FILE) -> None:
-    """Create tables, indices and views if they do not exist."""
+    """Create tables, indices and views if they do not exist, then apply migrations."""
     conn.executescript(schema_file.read_text(encoding="utf-8"))
+    migrate(conn)
+
+
+def migrate(conn: sqlite3.Connection) -> None:
+    """Add columns introduced after a database was first created.
+
+    ``has_details`` (Nov 2026): existing rows default to 0 ("unknown"), so the
+    coverage figure errs on the cautious side for older databases.
+    """
+    columns = {row[1] for row in conn.execute("PRAGMA table_info(postings)")}
+    if "has_details" not in columns:
+        conn.execute("ALTER TABLE postings ADD COLUMN has_details INTEGER NOT NULL DEFAULT 0 "
+                     "CHECK (has_details IN (0, 1))")
 
 
 def dedup_key(title: str, company: str) -> str:
@@ -93,7 +109,9 @@ def upsert_runs(conn: sqlite3.Connection, raw_dir: Path) -> int:
 
 def upsert_postings(conn: sqlite3.Connection, postings: list[Posting]) -> None:
     """Insert new postings and update existing ones by dedup key."""
-    rows = [{**asdict(p), "dedup_key": dedup_key(p.title, p.company)} for p in postings]
+    rows = [{**asdict(p), "dedup_key": dedup_key(p.title, p.company),
+             "has_details": int(bool(p.description)), "description": p.description or None}
+            for p in postings]
     conn.executemany(UPSERT_POSTING, rows)
 
 
