@@ -3,7 +3,9 @@
 **Which skills do Hamburg employers ask for when they hire working students (Werkstudierende) in IT, data and software?**
 This project collects job postings daily from the German Federal Employment Agency's public API, cleans and stores them in SQLite, analyses them with plain SQL and publishes an interactive, bilingual dashboard on GitHub Pages.
 
-**Live dashboard:** `https://YOUR-USERNAME.github.io/hamburg-werkstudent-dashboard/` <!-- replace after enabling Pages -->
+**Live dashboard:** https://ruzbeh21.github.io/hamburg-werkstudent-dashboard/
+
+[![Pipeline](https://github.com/ruzbeh21/hamburg-werkstudent-dashboard/actions/workflows/pipeline.yml/badge.svg)](https://github.com/ruzbeh21/hamburg-werkstudent-dashboard/actions/workflows/pipeline.yml)
 
 ![Dashboard overview: KPI tiles and the top 15 requested skills](docs/screenshots/overview-light.png)
 
