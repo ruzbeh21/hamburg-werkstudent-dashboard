@@ -22,3 +22,5 @@ jobs:
       - run: python scripts/diagnose_api.py
       - name: Burst test (40 details in a row, like the pipeline)
         run: python scripts/diagnose_api.py --burst 40 1.0
+      - name: Burst test with one shared Session (exactly like collect.py)
+        run: python scripts/diagnose_api.py --burst 40 1.0 --session

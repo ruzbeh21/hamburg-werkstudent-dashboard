@@ -72,8 +72,11 @@ def main() -> None:
             probe(label, base + path.format(enc=enc), headers)
 
 
-def burst(n: int, pause: float) -> None:
+def burst(n: int, pause: float, use_session: bool = False) -> None:
     """Fetch ``n`` details in a row like the pipeline does and print the status sequence.
+
+    With ``use_session`` one ``requests.Session`` is reused (keep-alive + cookies),
+    exactly like ``collect.py``; otherwise every request is independent.
 
     Then waits and retries the first failure, to tell rate limiting apart from
     postings that really are gone.
@@ -81,20 +84,23 @@ def burst(n: int, pause: float) -> None:
     cfg = load_config()
     api = cfg["api"]
     headers = {"X-API-Key": api["client_id"], "User-Agent": "hamburg-werkstudent-dashboard (portfolio project)"}
+    http = requests.Session() if use_session else requests
     refs: set[str] = set()
     for term in cfg["search"]["terms"]:
         time.sleep(1.0)
-        data = requests.get(api["base_url"] + api["search_path"], headers=headers, timeout=30, params={
+        data = http.get(api["base_url"] + api["search_path"], headers=headers, timeout=30, params={
             "was": term, "wo": cfg["search"]["location"], "umkreis": cfg["search"]["radius_km"],
             "size": 50, "page": 1}).json()
         refs.update(j["referenznummer"] for j in data.get("ergebnisliste", []))
     ordered = sorted(refs)[:n]
-    print(f"Burst: {len(ordered)} details, {pause}s apart")
+    print(f"Burst: {len(ordered)} details, {pause}s apart, {'one shared Session' if use_session else 'independent requests'}")
+    if use_session:
+        print("  cookies set by search responses (names only):", sorted(c.name for c in http.cookies) or "none")
     codes: list[int] = []
     for i, refnr in enumerate(ordered):
         time.sleep(pause)
         enc = base64.b64encode(refnr.encode()).decode()
-        resp = requests.get(f"{api['base_url']}{api['detail_path']}/{enc}", headers=headers, timeout=30)
+        resp = http.get(f"{api['base_url']}{api['detail_path']}/{enc}", headers=headers, timeout=30)
         codes.append(resp.status_code)
         if resp.status_code != 200 and codes.count(resp.status_code) == 1:
             retry_after = resp.headers.get("retry-after", "-")
@@ -112,6 +118,7 @@ def burst(n: int, pause: float) -> None:
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--burst":
         burst(int(sys.argv[2]) if len(sys.argv) > 2 else 40,
-              float(sys.argv[3]) if len(sys.argv) > 3 else 1.0)
+              float(sys.argv[3]) if len(sys.argv) > 3 else 1.0,
+              use_session="--session" in sys.argv)
     else:
         main()
