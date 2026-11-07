@@ -36,7 +36,6 @@ posting_id,title,company,district,posted_date,role_category,work_mode,hours_max,
 29,Werkstudent / Studentische Aushilfe Service und Logistik (m/w/d),Bauhaus AG,Hamburg-Nord,2026-10-15,other,not_stated,,,https://www.arbeitsagentur.de/jobsuche/jobdetail/14011-44508386-1014-S,
 30,Werkstudent Business Intelligence & Data Analytics - BI Reporting maxingvest (m/w/d),Tchibo GmbH,Hamburg-Mitte,2026-10-14,data,hybrid,,B2,https://www.arbeitsagentur.de/jobsuche/jobdetail/11937-35011_59546-1-S,"BI / Reporting, KI / GenAI, Power Platform, Python, SQL"
 31,Werkstudent Net-Sec-Automation & Monitoring (m/w/d),Tchibo GmbH,Hamburg-Nord,2026-10-14,it_ops,not_stated,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/11937-34971_59457-1-S,"BI / Reporting, KI / GenAI, Netzwerke, Python"
-33,Werkstudent KI & Prozessoptimierung (m/w/d),simplecon GmbH,Eimsbüttel,2026-10-12,data,hybrid,,mentioned,https://www.arbeitsagentur.de/jobsuche/jobdetail/12288-4963186725-S,KI / GenAI
 32,Werkstudent:in Einzelhandel Technologie & Monitoring (m/w/d),EDEKA IT Stiftung & Co. OHG,Hamburg-Nord,2026-10-12,it_ops,hybrid,20,,https://www.arbeitsagentur.de/jobsuche/jobdetail/13334-00005f67e8a001-S,"Agile / Scrum, SAP"
 36,Industrial Engineering - Working Student (m/f/d),Nexperia Germany GmbH,Eimsbüttel,2026-10-09,other,not_stated,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1003835193-S,
 35,"Werkstudent*in (gn) EDI & Marktkommunikation, Zentrale | Klostertor 1",LichtBlick SE,Hamburg-Mitte,2026-10-09,it_ops,hybrid,20,mentioned,https://www.arbeitsagentur.de/jobsuche/jobdetail/12811-2353485-S,"Agile / Scrum, KI / GenAI"
@@ -70,11 +69,11 @@ posting_id,title,company,district,posted_date,role_category,work_mode,hours_max,
 65,Working Student Procurement Strategy (d/f/m),Airbus Defence and Space GmbH,Hamburg-Mitte,2026-05-08,other,not_stated,20,mentioned,https://www.arbeitsagentur.de/jobsuche/jobdetail/16947-944602865-S,
 67,Werkstudent (m/w/d) in der Steuerberatung,Solidaris Treuhand GmbH,Hamburg-Mitte,2026-04-16,other,hybrid,,,https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1001249635-S,MS Office / M365
 68,Werkstudent (m/w/d) in der Wirtschaftsprüfung,Solidaris Revisions GmbH,Hamburg-Mitte,2026-04-16,other,hybrid,,,https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1001249624-S,MS Office / M365
-66,Werkstudent IT-Projektunterstützung Endgeräte (m/w/d),BWI GmbH,Altona,2026-04-16,it_ops,hybrid,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/12336-a26f539j0439241-S,MS Office / M365
 69,Werkstudent im Produktionsmanagement FAL HH (d/m/w),Airbus Operations GmbH,Hamburg-Mitte,2026-04-13,other,hybrid,18,B2,https://www.arbeitsagentur.de/jobsuche/jobdetail/16947-939093841-S,Excel
 70,Working Student (d/f/m) – Technical Data: AMM & NTM,Airbus Operations GmbH,Hamburg-Mitte,2026-04-02,data,not_stated,20,mentioned,https://www.arbeitsagentur.de/jobsuche/jobdetail/16947-937247530-S,MS Office / M365
 71,Master Thesis Student in the field of Aerospace Engineering (d/f/m),Airbus Operations GmbH,Hamburg-Mitte,2026-03-26,other,not_stated,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/16947-935491057-S,Excel
 72,Master student in the field of Production Engineering and Management (d/f/m),Airbus Operations GmbH,Hamburg-Mitte,2026-03-24,other,not_stated,,,https://www.arbeitsagentur.de/jobsuche/jobdetail/16947-935102091-S,
+66,Werkstudent IT-Projektunterstützung Endgeräte (m/w/d),BWI GmbH,Altona,2026-03-18,it_ops,hybrid,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/12336-a26f539j0439241-S,MS Office / M365
 73,Werkstudent (d/m/w) im Business Controlling,Airbus Defence and Space GmbH,Hamburg-Mitte,2026-03-16,other,hybrid,18,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/16947-933389435-S,Excel
 74,"Werkstudent (m/w/d) Digitalisierung, STERAC Transport & Logistik GmbH",STERAC Transport & Logistik GmbH,Wandsbek,2026-03-11,it_ops,not_stated,,,https://www.arbeitsagentur.de/jobsuche/jobdetail/12811-2193503-S,KI / GenAI
 75,Werkstudent Technische Gebäudeausrüstung (m/w/x),Sweco GmbH,Hamburg,2026-03-09,other,not_stated,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/18995-S3050-S,
