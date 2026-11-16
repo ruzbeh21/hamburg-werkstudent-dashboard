@@ -41,15 +41,28 @@ def files_to_check() -> list[Path]:
     except (subprocess.CalledProcessError, FileNotFoundError):
         files = [p for p in ROOT.rglob("*")
                  if p.is_file() and not SKIP_DIRS.intersection(p.relative_to(ROOT).parts)]
-        # data/ is skipped as a whole, but the history database is meant to be published.
-        history = ROOT / "data" / "history.db"
-        return files + [history] if history.exists() else files
+        # data/ is skipped as a whole, but these two databases are meant to be published.
+        published = [ROOT / "data" / name for name in ("history.db", "rag_index.db")]
+        return files + [p for p in published if p.exists()]
 
 
 def scan_database(path: Path) -> list[str]:
-    """A published SQLite file must not contain any description text."""
+    """A published SQLite file must not contain any description text.
+
+    Two kinds are published: the pipeline history (``postings.description`` must be
+    empty) and the RAG index (only structured chunks, never built with descriptions).
+    """
     try:
         conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+        tables = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'")}
+        if "chunks" in tables and "meta" in tables:            # RAG index
+            built_with = conn.execute("SELECT value FROM meta WHERE key = 'with_descriptions'").fetchone()
+            text_chunks = conn.execute("SELECT COUNT(*) FROM chunks WHERE chunk_no > 0").fetchone()[0]
+            conn.close()
+            findings = [f"{text_chunks} description chunk(s) in the RAG index"] if text_chunks else []
+            if built_with and built_with[0] == "true":
+                findings.append("RAG index was built with --with-descriptions")
+            return findings
         with_text = conn.execute(
             "SELECT COUNT(*) FROM postings WHERE description IS NOT NULL AND description <> ''"
         ).fetchone()[0]
