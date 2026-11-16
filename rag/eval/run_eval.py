@@ -119,18 +119,23 @@ def summarise(results: list[QuestionResult]) -> dict[str, float]:
     answerable = [r for r in results if r.expected]
     unanswerable = [r for r in results if not r.expected]
     metrics: dict[str, float] = {}
-    n = len(answerable)
+    n = len(answerable) or 1
     for k in KS:
         metrics[f"hit@{k}"] = sum(1 for r in answerable if r.first_rank and r.first_rank <= k) / n
-    metrics["mrr@10"] = sum(1 / r.first_rank for r in answerable if r.first_rank) / len(answerable)
-    metrics["recall@10"] = sum(r.found_in_top10 / min(r.expected, 10) for r in answerable) / len(answerable)
-    metrics["answerable_flagged_confident"] = sum(r.confident for r in answerable) / len(answerable)
+    metrics["mrr@10"] = sum(1 / r.first_rank for r in answerable if r.first_rank) / n
+    metrics["recall@10"] = sum(r.found_in_top10 / min(r.expected, 10) for r in answerable) / n
+    metrics["answerable_flagged_confident"] = sum(r.confident for r in answerable) / n
     if unanswerable:
         metrics["no_answer_rejected"] = sum(not r.confident for r in unanswerable) / len(unanswerable)
     return metrics
 
 
 # --------------------------------------------------------------------------- report
+
+def question_group(question: dict) -> str:
+    """'filter-solvable' if the parser can turn the question into its own label rule."""
+    return "filter-solvable" if any(w in question["type"] for w in ("skill", "time")) else "search"
+
 
 def write_report(path: Path, config: dict, labels: dict, per_mode: dict[str, list[QuestionResult]],
                  questions: list[dict]) -> None:
@@ -154,6 +159,19 @@ def write_report(path: Path, config: dict, labels: dict, per_mode: dict[str, lis
                      + f" | {m['mrr@10']:.3f} | {m['recall@10']:.2f} "
                      f"| {m['answerable_flagged_confident']:.2f} "
                      f"| {m.get('no_answer_rejected', float('nan')):.2f} |")
+    lines += ["", "## By question group", "",
+              "Skill and time questions are *filter-solvable*: the query parser extracts the same skill "
+              "ids and date rule the labels are derived from, so the filter alone returns the expected "
+              "set. The *search* group (topic, role, company) is where ranking quality actually shows.", "",
+              "| Variant | group | questions | hit@1 | hit@3 | MRR@10 | recall@10 |",
+              "|---|---|---|---|---|---|---|"]
+    for mode in ("hybrid", "hybrid_no_filters", "vector", "bm25"):
+        for group in ("filter-solvable", "search"):
+            subset = [r for r, q in zip(per_mode[mode], questions, strict=True)
+                      if labels[q["id"]] and question_group(q) == group]
+            m = summarise(subset)
+            lines.append(f"| {mode} | {group} | {len(subset)} | {m['hit@1']:.2f} | {m['hit@3']:.2f} "
+                         f"| {m['mrr@10']:.3f} | {m['recall@10']:.2f} |")
     lines += ["", "## Per question (hybrid)", "",
               "| id | type | question | expected | first relevant rank | found in top 10 | confident |",
               "|---|---|---|---|---|---|---|"]
