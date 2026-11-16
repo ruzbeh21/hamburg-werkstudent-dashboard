@@ -1,0 +1,595 @@
+{
+ "q01": [
+  {
+   "posting_id": 27,
+   "title": "Werkstudent Data Analytics und Business Intelligence (m/w/d)",
+   "company": "Schleswig-Holstein Netz GmbH"
+  },
+  {
+   "posting_id": 39,
+   "title": "Werkstudent im Bereich Tax / Legal Innovation & Technology (m/w/d)",
+   "company": "Baker Tilly Holding GmbH Wirtschaftsprüfungs- gesellschaft"
+  }
+ ],
+ "q02": [
+  {
+   "posting_id": 27,
+   "title": "Werkstudent Data Analytics und Business Intelligence (m/w/d)",
+   "company": "Schleswig-Holstein Netz GmbH"
+  },
+  {
+   "posting_id": 30,
+   "title": "Werkstudent Business Intelligence & Data Analytics - BI Reporting maxingvest (m/w/d)",
+   "company": "Tchibo GmbH"
+  },
+  {
+   "posting_id": 86,
+   "title": "EY-Parthenon Werkstudent Programmierung - HR Transactions - Deal Management (w/m/d)",
+   "company": "EY Strategy & Transactions GmbH"
+  },
+  {
+   "posting_id": 91,
+   "title": "Werkstudent (m/w/d) Webentwicklung gesucht: Mach mit uns die Ausbildung besser – Arbeite flexibel vo",
+   "company": "Ideenkraftwerk GmbH"
+  },
+  {
+   "posting_id": 95,
+   "title": "Werkstudent (m/w/d) IT / Business Infrastructure – ERP, PIM, DMS & CLM",
+   "company": "BIGFOOD Produktions GmbH"
+  },
+  {
+   "posting_id": 96,
+   "title": "Werkstudent*in Hydrologie (m/w/d)",
+   "company": "Hamburg Port Authority AÖR"
+  },
+  {
+   "posting_id": 98,
+   "title": "Werkstudent Strategischer Einkauf - Data & Analytics / Performance Management, Hamburg",
+   "company": "LESER GmbH & Co. KG"
+  }
+ ],
+ "q03": [
+  {
+   "posting_id": 38,
+   "title": "Werkstudent (m/w/d) Automation Engineering & Intelligent Automation",
+   "company": "SIGNAL IDUNA Krankenversicherung a. G."
+  },
+  {
+   "posting_id": 47,
+   "title": "Werkstudent Full Stack Entwicklung – Java/Spring & TypeScript/Angular (m/w/d)",
+   "company": "crossnative GmbH"
+  },
+  {
+   "posting_id": 90,
+   "title": "Werkstudent Softwareentwicklung (m/w/d)",
+   "company": "PPI AG"
+  }
+ ],
+ "q04": [
+  {
+   "posting_id": 32,
+   "title": "Werkstudent:in Einzelhandel Technologie & Monitoring (m/w/d)",
+   "company": "EDEKA IT Stiftung & Co. OHG"
+  },
+  {
+   "posting_id": 44,
+   "title": "Werkstudent:in Personalmanagement (m/w/d)",
+   "company": "EDEKA IT Stiftung & Co. OHG"
+  },
+  {
+   "posting_id": 46,
+   "title": "Werkstudent (d/m/w) im Bereich Quality Engineering Cabin & Cargo",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 87,
+   "title": "Werkstudent Tax Technology VAT (w/m/d)",
+   "company": "EY Tax GmbH Steuerberatungsgesellschaft"
+  },
+  {
+   "posting_id": 99,
+   "title": "Werkstudent Smart Meter Abrechnung (w/m/d)",
+   "company": "E.ON Grid Solutions GmbH"
+  }
+ ],
+ "q05": [
+  {
+   "posting_id": 27,
+   "title": "Werkstudent Data Analytics und Business Intelligence (m/w/d)",
+   "company": "Schleswig-Holstein Netz GmbH"
+  },
+  {
+   "posting_id": 30,
+   "title": "Werkstudent Business Intelligence & Data Analytics - BI Reporting maxingvest (m/w/d)",
+   "company": "Tchibo GmbH"
+  },
+  {
+   "posting_id": 39,
+   "title": "Werkstudent im Bereich Tax / Legal Innovation & Technology (m/w/d)",
+   "company": "Baker Tilly Holding GmbH Wirtschaftsprüfungs- gesellschaft"
+  },
+  {
+   "posting_id": 44,
+   "title": "Werkstudent:in Personalmanagement (m/w/d)",
+   "company": "EDEKA IT Stiftung & Co. OHG"
+  }
+ ],
+ "q06": [
+  {
+   "posting_id": 12,
+   "title": "Werkstudent*in IT-Sicherheit (m/w/d)",
+   "company": "Secunet Security Networks AG"
+  },
+  {
+   "posting_id": 31,
+   "title": "Werkstudent Net-Sec-Automation & Monitoring (m/w/d)",
+   "company": "Tchibo GmbH"
+  },
+  {
+   "posting_id": 101,
+   "title": "Werkstudent:in Informationssicherheit",
+   "company": "PD - Berater der öffentlichen Hand GmbH"
+  }
+ ],
+ "q07": [
+  {
+   "posting_id": 47,
+   "title": "Werkstudent Full Stack Entwicklung – Java/Spring & TypeScript/Angular (m/w/d)",
+   "company": "crossnative GmbH"
+  },
+  {
+   "posting_id": 54,
+   "title": "Werkstudent Softwareentwicklung (m/w/d)",
+   "company": "Nidobirds Ventures GmbH"
+  },
+  {
+   "posting_id": 57,
+   "title": "Werkstudent*in Test Engineering & Messtechnik (m/w/d)",
+   "company": "ENQT GmbH"
+  },
+  {
+   "posting_id": 86,
+   "title": "EY-Parthenon Werkstudent Programmierung - HR Transactions - Deal Management (w/m/d)",
+   "company": "EY Strategy & Transactions GmbH"
+  },
+  {
+   "posting_id": 90,
+   "title": "Werkstudent Softwareentwicklung (m/w/d)",
+   "company": "PPI AG"
+  },
+  {
+   "posting_id": 91,
+   "title": "Werkstudent (m/w/d) Webentwicklung gesucht: Mach mit uns die Ausbildung besser – Arbeite flexibel vo",
+   "company": "Ideenkraftwerk GmbH"
+  }
+ ],
+ "q08": [
+  {
+   "posting_id": 27,
+   "title": "Werkstudent Data Analytics und Business Intelligence (m/w/d)",
+   "company": "Schleswig-Holstein Netz GmbH"
+  },
+  {
+   "posting_id": 30,
+   "title": "Werkstudent Business Intelligence & Data Analytics - BI Reporting maxingvest (m/w/d)",
+   "company": "Tchibo GmbH"
+  },
+  {
+   "posting_id": 70,
+   "title": "Working Student (d/f/m) – Technical Data: AMM & NTM",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 98,
+   "title": "Werkstudent Strategischer Einkauf - Data & Analytics / Performance Management, Hamburg",
+   "company": "LESER GmbH & Co. KG"
+  },
+  {
+   "posting_id": 103,
+   "title": "NTT DATA Deutschland SE: Werkstudent (w/m/x) im Bereich Organisation, Development & Culture",
+   "company": "NTT DATA Deutschland SE"
+  }
+ ],
+ "q09": [
+  {
+   "posting_id": 16,
+   "title": "Werkstudent Digital Workplace & IT Service Management (m/w/d)",
+   "company": "Tchibo GmbH"
+  },
+  {
+   "posting_id": 66,
+   "title": "Werkstudent IT-Projektunterstützung Endgeräte (m/w/d)",
+   "company": "BWI GmbH"
+  }
+ ],
+ "q10": [
+  {
+   "posting_id": 20,
+   "title": "Working Student Global Marketing (m/f/d)",
+   "company": "Nexperia Germany GmbH"
+  },
+  {
+   "posting_id": 23,
+   "title": "Werkstudent Social Media und Content Creation (m/w/d)",
+   "company": "E.ON Grid Solutions GmbH"
+  },
+  {
+   "posting_id": 52,
+   "title": "Working Student Brand Marketing (gn)",
+   "company": "The Quality Group GmbH"
+  },
+  {
+   "posting_id": 58,
+   "title": "Werkstudent Sales & Marketing (w/m/d)",
+   "company": "PlantaCorp GmbH"
+  },
+  {
+   "posting_id": 89,
+   "title": "Werkstudent*in (m/w/d) im Bereich Marketing, Sales, Buchhaltung & Office Management",
+   "company": "CircularTronics GmbH"
+  }
+ ],
+ "q11": [
+  {
+   "posting_id": 19,
+   "title": "Werkstudent:in Personalwesen / Human Relations (m/w/d)",
+   "company": "Interone GmbH"
+  },
+  {
+   "posting_id": 44,
+   "title": "Werkstudent:in Personalmanagement (m/w/d)",
+   "company": "EDEKA IT Stiftung & Co. OHG"
+  },
+  {
+   "posting_id": 76,
+   "title": "Werkstudent im HRBP Bereich für Operations (d/m/w)",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 83,
+   "title": "Werkstudent/Studentische Hilfskraft (m/w/d) im Bereich Personalmanagement",
+   "company": "Homecare von Morgen GmbH"
+  },
+  {
+   "posting_id": 86,
+   "title": "EY-Parthenon Werkstudent Programmierung - HR Transactions - Deal Management (w/m/d)",
+   "company": "EY Strategy & Transactions GmbH"
+  }
+ ],
+ "q12": [
+  {
+   "posting_id": 39,
+   "title": "Werkstudent im Bereich Tax / Legal Innovation & Technology (m/w/d)",
+   "company": "Baker Tilly Holding GmbH Wirtschaftsprüfungs- gesellschaft"
+  },
+  {
+   "posting_id": 67,
+   "title": "Werkstudent (m/w/d) in der Steuerberatung",
+   "company": "Solidaris Treuhand GmbH"
+  },
+  {
+   "posting_id": 68,
+   "title": "Werkstudent (m/w/d) in der Wirtschaftsprüfung",
+   "company": "Solidaris Revisions GmbH"
+  },
+  {
+   "posting_id": 87,
+   "title": "Werkstudent Tax Technology VAT (w/m/d)",
+   "company": "EY Tax GmbH Steuerberatungsgesellschaft"
+  }
+ ],
+ "q13": [
+  {
+   "posting_id": 2,
+   "title": "Werkstudent (d/m/w) - Supplier Monitoring and Performance",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 34,
+   "title": "Working Student (d/f/m) in Single Aisle Industrial System Evolution",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 43,
+   "title": "Werkstudent Quality Plant Hamburg (d/m/w)",
+   "company": "Airbus Defence and Space GmbH"
+  },
+  {
+   "posting_id": 46,
+   "title": "Werkstudent (d/m/w) im Bereich Quality Engineering Cabin & Cargo",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 49,
+   "title": "Werkstudent (d/m/w) Chief of Staff Office",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 61,
+   "title": "Werkstudent (d/m/w) im Bereich Prozessplanung",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 63,
+   "title": "Working student (d/f/m) within product life cycle management",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 65,
+   "title": "Working Student Procurement Strategy (d/f/m)",
+   "company": "Airbus Defence and Space GmbH"
+  },
+  {
+   "posting_id": 69,
+   "title": "Werkstudent im Produktionsmanagement FAL HH (d/m/w)",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 70,
+   "title": "Working Student (d/f/m) – Technical Data: AMM & NTM",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 71,
+   "title": "Master Thesis Student in the field of Aerospace Engineering (d/f/m)",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 72,
+   "title": "Master student in the field of Production Engineering and Management (d/f/m)",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 73,
+   "title": "Werkstudent (d/m/w) im Business Controlling",
+   "company": "Airbus Defence and Space GmbH"
+  },
+  {
+   "posting_id": 76,
+   "title": "Werkstudent im HRBP Bereich für Operations (d/m/w)",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 77,
+   "title": "Working Student within Structure Team NextGeneration (d/f/m)",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 78,
+   "title": "Master student in the field of innovative business management (d/f/m)",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 80,
+   "title": "Working Student Single Aisle Industrial System Evolution (d/f/m)",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 82,
+   "title": "Werkstudent Projektmanagement Engineering (d/m/w)",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 85,
+   "title": "Master student in the field of air conditioning systems (d/f/m)",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 92,
+   "title": "Working Student (d/f/m) - Widebody Local Chief Engineering & Project Management",
+   "company": "Airbus Operations GmbH"
+  }
+ ],
+ "q14": [
+  {
+   "posting_id": 105,
+   "title": "Werkstudent Produktionsplanung Elektronik (m/w/d)",
+   "company": "Deutsche Lufthansa AG"
+  }
+ ],
+ "q15": [
+  {
+   "posting_id": 30,
+   "title": "Werkstudent Business Intelligence & Data Analytics - BI Reporting maxingvest (m/w/d)",
+   "company": "Tchibo GmbH"
+  },
+  {
+   "posting_id": 103,
+   "title": "NTT DATA Deutschland SE: Werkstudent (w/m/x) im Bereich Organisation, Development & Culture",
+   "company": "NTT DATA Deutschland SE"
+  }
+ ],
+ "q16": [
+  {
+   "posting_id": 16,
+   "title": "Werkstudent Digital Workplace & IT Service Management (m/w/d)",
+   "company": "Tchibo GmbH"
+  },
+  {
+   "posting_id": 20,
+   "title": "Working Student Global Marketing (m/f/d)",
+   "company": "Nexperia Germany GmbH"
+  },
+  {
+   "posting_id": 25,
+   "title": "Werkstudent Non Food Warensteuerung (m/w/d)",
+   "company": "Tchibo GmbH"
+  },
+  {
+   "posting_id": 30,
+   "title": "Werkstudent Business Intelligence & Data Analytics - BI Reporting maxingvest (m/w/d)",
+   "company": "Tchibo GmbH"
+  },
+  {
+   "posting_id": 31,
+   "title": "Werkstudent Net-Sec-Automation & Monitoring (m/w/d)",
+   "company": "Tchibo GmbH"
+  },
+  {
+   "posting_id": 35,
+   "title": "Werkstudent*in (gn) EDI & Marktkommunikation, Zentrale | Klostertor 1",
+   "company": "LichtBlick SE"
+  },
+  {
+   "posting_id": 37,
+   "title": "Werkstudent*in mobiles Sensorsystem (m/w/d)",
+   "company": "ENQT GmbH"
+  },
+  {
+   "posting_id": 38,
+   "title": "Werkstudent (m/w/d) Automation Engineering & Intelligent Automation",
+   "company": "SIGNAL IDUNA Krankenversicherung a. G."
+  },
+  {
+   "posting_id": 39,
+   "title": "Werkstudent im Bereich Tax / Legal Innovation & Technology (m/w/d)",
+   "company": "Baker Tilly Holding GmbH Wirtschaftsprüfungs- gesellschaft"
+  },
+  {
+   "posting_id": 43,
+   "title": "Werkstudent Quality Plant Hamburg (d/m/w)",
+   "company": "Airbus Defence and Space GmbH"
+  },
+  {
+   "posting_id": 46,
+   "title": "Werkstudent (d/m/w) im Bereich Quality Engineering Cabin & Cargo",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 47,
+   "title": "Werkstudent Full Stack Entwicklung – Java/Spring & TypeScript/Angular (m/w/d)",
+   "company": "crossnative GmbH"
+  },
+  {
+   "posting_id": 49,
+   "title": "Werkstudent (d/m/w) Chief of Staff Office",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 50,
+   "title": "EY-Parthenon Werkstudent Decision Modelling & Economics (w/m/d)",
+   "company": "EY Strategy & Transactions GmbH"
+  },
+  {
+   "posting_id": 58,
+   "title": "Werkstudent Sales & Marketing (w/m/d)",
+   "company": "PlantaCorp GmbH"
+  },
+  {
+   "posting_id": 63,
+   "title": "Working student (d/f/m) within product life cycle management",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 74,
+   "title": "Werkstudent (m/w/d) Digitalisierung, STERAC Transport & Logistik GmbH",
+   "company": "STERAC Transport & Logistik GmbH"
+  },
+  {
+   "posting_id": 78,
+   "title": "Master student in the field of innovative business management (d/f/m)",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 81,
+   "title": "Werkstudent (m/w/d) im Bereich E-Commerce / Shopify",
+   "company": "Repair First Haake GmbH"
+  },
+  {
+   "posting_id": 82,
+   "title": "Werkstudent Projektmanagement Engineering (d/m/w)",
+   "company": "Airbus Operations GmbH"
+  },
+  {
+   "posting_id": 86,
+   "title": "EY-Parthenon Werkstudent Programmierung - HR Transactions - Deal Management (w/m/d)",
+   "company": "EY Strategy & Transactions GmbH"
+  },
+  {
+   "posting_id": 90,
+   "title": "Werkstudent Softwareentwicklung (m/w/d)",
+   "company": "PPI AG"
+  },
+  {
+   "posting_id": 96,
+   "title": "Werkstudent*in Hydrologie (m/w/d)",
+   "company": "Hamburg Port Authority AÖR"
+  },
+  {
+   "posting_id": 101,
+   "title": "Werkstudent:in Informationssicherheit",
+   "company": "PD - Berater der öffentlichen Hand GmbH"
+  },
+  {
+   "posting_id": 103,
+   "title": "NTT DATA Deutschland SE: Werkstudent (w/m/x) im Bereich Organisation, Development & Culture",
+   "company": "NTT DATA Deutschland SE"
+  },
+  {
+   "posting_id": 105,
+   "title": "Werkstudent Produktionsplanung Elektronik (m/w/d)",
+   "company": "Deutsche Lufthansa AG"
+  }
+ ],
+ "q17": [
+  {
+   "posting_id": 100,
+   "title": "Werkstudent:in öffentliche Finanzen",
+   "company": "PD - Berater der öffentlichen Hand GmbH"
+  },
+  {
+   "posting_id": 101,
+   "title": "Werkstudent:in Informationssicherheit",
+   "company": "PD - Berater der öffentlichen Hand GmbH"
+  },
+  {
+   "posting_id": 102,
+   "title": "Werkstudent (m/w/d) Arbeitsrecht",
+   "company": "DAHER INDUSTRIAL SERVICES GmbH"
+  },
+  {
+   "posting_id": 103,
+   "title": "NTT DATA Deutschland SE: Werkstudent (w/m/x) im Bereich Organisation, Development & Culture",
+   "company": "NTT DATA Deutschland SE"
+  },
+  {
+   "posting_id": 104,
+   "title": "Werkstudent (m/w/d) Digitalisierungs- und Optimierungsprojekte - Energy & Sustainability",
+   "company": "Rheinmetall AG"
+  },
+  {
+   "posting_id": 105,
+   "title": "Werkstudent Produktionsplanung Elektronik (m/w/d)",
+   "company": "Deutsche Lufthansa AG"
+  }
+ ],
+ "q18": [
+  {
+   "posting_id": 95,
+   "title": "Werkstudent (m/w/d) IT / Business Infrastructure – ERP, PIM, DMS & CLM",
+   "company": "BIGFOOD Produktions GmbH"
+  },
+  {
+   "posting_id": 98,
+   "title": "Werkstudent Strategischer Einkauf - Data & Analytics / Performance Management, Hamburg",
+   "company": "LESER GmbH & Co. KG"
+  },
+  {
+   "posting_id": 101,
+   "title": "Werkstudent:in Informationssicherheit",
+   "company": "PD - Berater der öffentlichen Hand GmbH"
+  },
+  {
+   "posting_id": 103,
+   "title": "NTT DATA Deutschland SE: Werkstudent (w/m/x) im Bereich Organisation, Development & Culture",
+   "company": "NTT DATA Deutschland SE"
+  },
+  {
+   "posting_id": 104,
+   "title": "Werkstudent (m/w/d) Digitalisierungs- und Optimierungsprojekte - Energy & Sustainability",
+   "company": "Rheinmetall AG"
+  }
+ ],
+ "q19": [],
+ "q20": []
+}

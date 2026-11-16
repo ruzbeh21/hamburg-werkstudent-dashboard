@@ -1,0 +1,104 @@
+# Evaluation set for retrieval (milestone 2).
+#
+# Written BEFORE any retrieval run. Each question has an objective criterion on the
+# frozen snapshot (rag/eval/snapshot.db, pipeline state of 2026-11-16); the expected
+# postings are derived from that criterion by `python -m rag.eval.run_eval --label`,
+# not from search results. Only postings online on the snapshot date count, because
+# the assistant searches current postings by default.
+#
+# Criterion keys (all given keys must hold):
+#   skills_all / skills_any  skill ids from the pipeline's skill extraction
+#   role                     list of role categories
+#   title_regex / company_regex   case-insensitive regex
+#   work_mode                list of work modes
+#   appeared_within_days     posted, or first seen after the very first collection run, within
+#                            N days up to the snapshot date (the first run saw the whole backlog,
+#                            so its date does not mean "new")
+#   none: true               nothing in the data answers it (tests "keine passenden Anzeigen")
+#
+# Caveat: skill criteria use the same keyword extraction that feeds the index, so those
+# questions measure ranking and filtering, not the accuracy of skill extraction itself.
+
+reference_date: "2026-11-16"
+
+questions:
+  - id: q01
+    question: "Welche Firmen in Hamburg suchen Werkstudenten mit Python und Power BI?"
+    type: skill
+    criterion: {skills_all: [python, power_bi]}
+  - id: q02
+    question: "Werkstudentenjobs mit SQL-Kenntnissen"
+    type: skill
+    criterion: {skills_all: [sql]}
+  - id: q03
+    question: "Which working student jobs require Java?"
+    type: skill / English
+    criterion: {skills_all: [java]}
+  - id: q04
+    question: "Stellen, in denen SAP-Kenntnisse gefragt sind"
+    type: skill
+    criterion: {skills_all: [sap]}
+  - id: q05
+    question: "Werkstudent mit Power Automate oder Power Apps"
+    type: skill / synonym
+    criterion: {skills_all: [power_platform]}
+  - id: q06
+    question: "Werkstudent im Bereich IT-Sicherheit oder Cybersecurity"
+    type: topic
+    criterion: {title_regex: "sicherheit|security|net-?sec|cyber"}
+  - id: q07
+    question: "Softwareentwicklung als Werkstudent"
+    type: role
+    criterion: {role: [software]}
+  - id: q08
+    question: "data analyst working student"
+    type: role / English
+    criterion: {role: [data]}
+  - id: q09
+    question: "IT-Support, Service Desk oder Digital Workplace"
+    type: topic
+    criterion: {title_regex: "support|service ?desk|workplace|help ?desk|endger"}
+  - id: q10
+    question: "Werkstudent Marketing, Social Media oder Content"
+    type: topic / non-IT
+    criterion: {title_regex: "marketing|social media|content"}
+  - id: q11
+    question: "Werkstudentenjobs im Personalwesen (HR)"
+    type: topic / non-IT
+    criterion: {title_regex: "personal|\\bhr|human|recruit"}
+  - id: q12
+    question: "Werkstudent Steuerberatung oder Wirtschaftsprüfung"
+    type: topic / non-IT
+    criterion: {title_regex: "steuerberat|\\btax\\b|wirtschaftspr|audit"}   # not "Warensteuerung"
+  - id: q13
+    question: "Welche Werkstudentenstellen bietet Airbus an?"
+    type: company
+    criterion: {company_regex: "airbus"}
+  - id: q14
+    question: "working student jobs at Lufthansa"
+    type: company / English
+    criterion: {company_regex: "lufthansa"}
+  - id: q15
+    question: "Data-Jobs mit Homeoffice-Möglichkeit"
+    type: role + work mode
+    criterion: {role: [data], work_mode: [hybrid, remote]}
+  - id: q16
+    question: "Which jobs involve AI or machine learning?"
+    type: skill / English
+    criterion: {skills_any: [ai, ml]}
+  - id: q17
+    question: "Welche Werkstudentenstellen sind in den letzten 7 Tagen neu dazugekommen?"
+    type: time
+    criterion: {appeared_within_days: 7}
+  - id: q18
+    question: "Neue Jobs im Bereich Data, Software oder IT in den letzten 14 Tagen"
+    type: time + role
+    criterion: {appeared_within_days: 14, role: [data, software, it_ops]}
+  - id: q19
+    question: "Werkstudent in einer Zahnarztpraxis"
+    type: no answer
+    criterion: {none: true}
+  - id: q20
+    question: "working student in animal care at the zoo"
+    type: no answer / English
+    criterion: {none: true}
