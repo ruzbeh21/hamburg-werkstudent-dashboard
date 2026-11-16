@@ -69,18 +69,15 @@ def update_index(source: sqlite3.Connection, index: sqlite3.Connection, embedder
     store.delete_postings(index, gone)
     stats.deleted = len(gone)
 
+    first_run, last_run = source.execute("SELECT MIN(started_at), MAX(started_at) FROM runs").fetchone()
     store.set_meta(index, with_descriptions=str(with_descriptions).lower(),
-                   source_last_run=_last_run(source) or "")
+                   source_first_run=first_run or "", source_last_run=last_run or "")
     index.commit()
     if stats.embedded or stats.deleted:
         index.execute("VACUUM")                 # keep the committed file compact after rewrites
     stats.__dict__.update(store.counts(index))
     stats.seconds = round(time.perf_counter() - started, 2)
     return stats
-
-
-def _last_run(source: sqlite3.Connection) -> str | None:
-    return source.execute("SELECT MAX(started_at) FROM runs").fetchone()[0]
 
 
 def main(argv: list[str] | None = None) -> IndexStats:
