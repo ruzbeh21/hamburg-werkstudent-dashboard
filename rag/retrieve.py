@@ -35,7 +35,7 @@ a an and are as at be bei bis das dem den der des die du ein eine einem einen ei
 haben hamburg hat ich im in ist je jobs job kann mit nach oder sind sie stelle stellen suche suchen sucht
 the to und von welche welcher welches werkstudent werkstudenten werkstudentin werkstudentinnen wie wo
 working student students which who with what are for in of on job jobs diese dieser diesem woche week
-this neue neuen new gibt es firmen unternehmen companies company position positions bereich area
+this neue neuen new gibt es firmen unternehmen companies company position positions bereich area or
 """.split())
 
 
