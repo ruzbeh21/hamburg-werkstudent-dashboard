@@ -1,0 +1,6 @@
+# RAG Q&A assistant (rag/). The pipeline itself only needs requirements.txt.
+-r requirements.txt
+sqlite-vec==0.1.9
+sentence-transformers==6.3.0
+numpy==2.5.5
+ruff==0.17.5

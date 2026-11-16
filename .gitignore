@@ -6,6 +6,10 @@ data/*.db
 # Exception: CI history database – descriptions stripped, checked by scripts/check_privacy.py
 !data/history.db
 data/*.sqlite
+# Local RAG index built with description texts (python -m rag.index --with-descriptions)
+data/rag_index_local.db
+# CI RAG index: structured fields only, checked by scripts/check_privacy.py
+!data/rag_index.db
 
 __pycache__/
 *.pyc

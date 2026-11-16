@@ -1,7 +1,7 @@
 # Hamburg working-student job market dashboard
 PYTHON ?= python3
 
-.PHONY: all install collect build export history test serve check-privacy clean-exports
+.PHONY: all install collect build export history test serve check-privacy clean-exports rag-install rag-index lint
 
 all: collect build export          ## full pipeline including API calls
 
@@ -19,6 +19,15 @@ export:                            ## run SQL queries and write docs/data/*.json
 
 history:                           ## rebuild data/history.db like CI does (no ad texts)
 	JOBS_DATABASE=data/history.db KEEP_DESCRIPTIONS=false $(PYTHON) run.py --skip-collect
+
+rag-install:                       ## install the RAG assistant dependencies
+	$(PYTHON) -m pip install -r requirements-rag.txt
+
+rag-index:                         ## build/update data/rag_index.db (incremental)
+	$(PYTHON) -m rag.index
+
+lint:                              ## ruff on the RAG code
+	$(PYTHON) -m ruff check rag tests/rag
 
 test:                              ## run the test suite
 	$(PYTHON) -m pytest -q

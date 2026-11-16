@@ -1,0 +1,10 @@
+# Lint settings for new code (rag/, tests/rag/). Matches the existing style:
+# 110-character lines, double quotes, `from __future__ import annotations`.
+line-length = 110
+target-version = "py311"
+
+[lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[lint.per-file-ignores]
+"tests/**" = ["E402"]   # imports after pytest.importorskip(...)
