@@ -1,0 +1,56 @@
+# Build the RAG API image and smoke-test it: health check plus one question.
+# Runs when code that ends up in the image changes, or manually. No API key in CI,
+# so the answer comes back in retrieval-only mode – which is exactly what is checked.
+name: RAG API image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "rag/**"
+      - "src/**"
+      - "dictionaries/**"
+      - "Dockerfile"
+      - ".dockerignore"
+      - "requirements*.txt"
+      - ".github/workflows/rag-image.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-smoke-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t hamburg-werkstudent-rag .
+
+      - name: Start container
+        run: docker run -d --name rag -p 8000:8000 hamburg-werkstudent-rag
+
+      - name: Health check
+        run: |
+          curl --fail --silent --show-error --retry 40 --retry-connrefused --retry-delay 3 \
+            http://localhost:8000/health | tee health.json
+          python3 -c "import json; h = json.load(open('health.json')); assert h['status'] == 'ok' and h['index']['postings'] > 0, h"
+
+      - name: Ask a question
+        # include_expired: postings never leave the history, so the check does not depend on
+        # which jobs happen to be online when the image is built.
+        run: |
+          curl --fail --silent --show-error -X POST http://localhost:8000/ask \
+            -H "Content-Type: application/json" \
+            -d '{"question": "Werkstudent im Bereich IT-Sicherheit", "k": 3, "include_expired": true}' \
+            | tee answer.json
+          python3 -c "import json; a = json.load(open('answer.json')); assert a['mode'] == 'retrieval_only' and a['sources'], a; print('\nsources:', [s['title'] for s in a['sources']])"
+
+      - name: Image size
+        run: docker image ls hamburg-werkstudent-rag --format "{{.Repository}} {{.Size}}"
+
+      - name: Container logs
+        if: always()
+        run: docker logs rag
