@@ -58,10 +58,10 @@ def test_skill_filter_relaxes_to_any_then_says_so(index) -> None:
     assert any(f.startswith("skills (any of") for f in result.applied_filters)
 
 
-def test_skill_nobody_has_is_dropped_and_reported(index) -> None:
+def test_skill_nobody_has_gives_no_results_instead_of_unrelated_postings(index) -> None:
     result = ask(index, "Werkstudent mit Tableau")       # a known skill, but no test posting has it
-    assert result.hits                                   # still ranked by search
-    assert any(f.startswith("skill filter dropped") for f in result.applied_filters)
+    assert result.hits == [] and result.confident is False
+    assert any("no posting matches" in f for f in result.applied_filters)
 
 
 def test_strict_skills_return_nothing_instead_of_relaxing(index) -> None:
@@ -103,3 +103,11 @@ def test_unrelated_question_is_not_confident(index) -> None:
 
 def test_today_comes_from_the_latest_run(index) -> None:
     assert today_from_index(index) == TODAY
+
+
+def test_empty_time_filter_does_not_blame_the_skills(index) -> None:
+    # Fixture postings were all first seen on the first run, so nothing is "new" on 2026-11-03.
+    result = ask(index, "Neue Stellen mit Python in den letzten 7 Tagen")
+    assert result.hits == []
+    assert not any("no posting matches" in f or "mentions any" in f for f in result.applied_filters)
+    assert any("not checked" in f for f in result.applied_filters)

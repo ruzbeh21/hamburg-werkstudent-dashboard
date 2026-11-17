@@ -7,8 +7,8 @@ never have to calibrate cosine similarities against BM25 values: each list
 contributes 1 / (60 + rank), the constant 60 from the original RRF paper.
 
 Filters are applied in SQL first (current postings, time range, work mode, skills);
-search then only ranks the postings that passed. Skills found automatically in a
-question are tried as AND, then OR, then dropped – and the response says which.
+search then only ranks the postings that passed. Skills found in a question are tried
+as AND, then OR – never dropped – and the response says which was used.
 """
 
 from __future__ import annotations
@@ -114,29 +114,34 @@ def candidate_ids(index: sqlite3.Connection, query: ParsedQuery, include_expired
 def filter_candidates(index: sqlite3.Connection, query: ParsedQuery,
                       include_expired: bool = False,
                       strict_skills: bool = False) -> tuple[list[int], list[str], bool]:
-    """Apply filters; relax automatically found skills AND → OR → none if nothing matches.
+    """Apply filters; relax automatically found skills from AND to OR if nothing matches.
 
-    Returns the candidate ids, human-readable filter notes, and whether the skill filter
-    was actually applied (False if the question had none or it had to be dropped).
+    Skills are never dropped: if no posting mentions any requested skill, the honest answer
+    is "nothing found", not unrelated postings. Returns the candidate ids, human-readable
+    filter notes, and whether a skill filter was applied.
     """
     applied = ["only postings online in the latest run"] if not include_expired else []
     applied += [n for n in query.notes if not n.startswith("skills")]
+    base = candidate_ids(index, query, include_expired, [], "and")
     if not query.skills:
-        return candidate_ids(index, query, include_expired, [], "and"), applied, False
-    modes = [("and", query.skills)]
-    if not strict_skills:
-        modes += [("or", query.skills), ("none", [])]
-    for mode, skills in modes:
-        ids = candidate_ids(index, query, include_expired, skills, mode)
-        if ids or strict_skills:
-            break
-    if mode == "and":
-        applied.append("skills (all of): " + ", ".join(query.skills))
-    elif mode == "or":
-        applied.append("skills (any of, no posting had all): " + ", ".join(query.skills))
+        return base, applied, False
+    if not base:
+        # Nothing passes the time/work-mode filters: relaxing skills cannot help, and the
+        # note must not blame the skills.
+        applied.append("skills (all of): " + ", ".join(query.skills) + " – not checked, no posting "
+                       "passes the other filters")
+        return [], applied, False
+    skills = ", ".join(query.skills)
+    ids = candidate_ids(index, query, include_expired, query.skills, "and")
+    if ids:
+        applied.append(f"skills (all of): {skills}")
+    elif strict_skills or len(query.skills) == 1:
+        applied.append(f"skills (all of): {skills} – no posting matches")
     else:
-        applied.append("skill filter dropped – no posting mentions " + ", ".join(query.skills))
-    return ids, applied, mode != "none"
+        ids = candidate_ids(index, query, include_expired, query.skills, "or")
+        applied.append(f"skills (any of, no posting had all): {skills}" if ids
+                       else f"skills: no posting mentions any of {skills}")
+    return ids, applied, bool(ids)
 
 
 def vector_ranking(index: sqlite3.Connection, embedder: Embedder, text: str,

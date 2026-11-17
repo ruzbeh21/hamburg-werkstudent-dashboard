@@ -22,8 +22,8 @@ def test_question_without_filters() -> None:
 
 
 @pytest.mark.parametrize("text, start, end", [
-    ("Welche Stellen gibt es diese Woche?", date(2026, 11, 16), MONDAY),
-    ("new jobs this week", date(2026, 11, 16), MONDAY),
+    ("Welche Stellen gibt es diese Woche?", date(2026, 11, 10), MONDAY),   # rolling 7 days
+    ("new jobs this week", date(2026, 11, 10), MONDAY),
     ("Stellen der letzten Woche", date(2026, 11, 9), date(2026, 11, 15)),
     ("in den letzten 7 Tagen", date(2026, 11, 10), MONDAY),
     ("past 14 days", date(2026, 11, 3), MONDAY),

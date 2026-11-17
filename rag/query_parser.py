@@ -6,7 +6,8 @@ question means exactly what "Power BI" means in the postings.
 
 Time phrases filter on *when a posting appeared*: its first publication date or the
 day the collector first saw it, whichever is in the range. So "diese Woche" means
-"new this week", not "still online this week" (that is the default anyway).
+"new this week", not "still online this week" (that is the default anyway), and it is
+read as the last 7 days rather than the calendar week.
 """
 
 from __future__ import annotations
@@ -54,7 +55,9 @@ def parse_time_range(text: str, today: date) -> tuple[date | None, date | None, 
         start = _week_start(today) - timedelta(days=7)
         return start, start + timedelta(days=6), "last week"
     if re.search(r"\b(diese[rn]?|in dieser) woche\b|\bthis week\b", lower):
-        return _week_start(today), today, "this week"
+        # Rolling 7 days, not the calendar week: on a Monday "diese Woche" would otherwise
+        # cover a single day, which is not what someone looking for new postings means.
+        return today - timedelta(days=6), today, "this week (last 7 days)"
     if re.search(r"\b(diese[nm]?|in diesem) monat\b|\bthis month\b", lower):
         return today.replace(day=1), today, "this month"
     if re.search(r"\bheute\b|\btoday\b", lower):
