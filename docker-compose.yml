@@ -1,0 +1,16 @@
+# docker compose up --build   →   http://localhost:8000/docs
+services:
+  rag-api:
+    build: .
+    image: hamburg-werkstudent-rag
+    ports:
+      - "8000:8000"
+    environment:
+      # Taken from your shell or a local .env file (git-ignored). Without it the API runs in
+      # retrieval-only mode and still returns the matching postings.
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      RAG_LLM_MODEL: ${RAG_LLM_MODEL:-claude-opus-5-5}
+    # Serve the index from your checkout (e.g. after `git pull`) instead of the one in the image:
+    # volumes:
+    #   - ./data/rag_index.db:/app/data/rag_index.db:ro
+    restart: unless-stopped

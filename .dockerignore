@@ -1,0 +1,16 @@
+# Keep the build context small and free of local data and secrets.
+.git
+.github
+.venv
+.env
+**/__pycache__
+.pytest_cache
+.ruff_cache
+docs/
+tests/
+scripts/
+rag/eval/
+data/raw/
+data/interim/
+data/jobs.db
+data/rag_index*.db
