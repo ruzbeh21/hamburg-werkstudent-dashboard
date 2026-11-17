@@ -1,11 +1,5 @@
-# RAG Q&A assistant (rag/). The pipeline itself only needs requirements.txt.
--r requirements.txt
-sqlite-vec==0.1.9
+# RAG Q&A assistant (rag/), including the local embedding model.
+# On Linux install CPU-only PyTorch first to avoid ~2 GB of CUDA libraries:
+#   pip install --index-url https://download.pytorch.org/whl/cpu torch==2.15.0
+-r requirements-rag-core.txt
 sentence-transformers==6.3.0
-anthropic==2.9.0
-fastapi==0.163.1
-pydantic==2.14.3
-uvicorn==0.54.0
-httpx==0.28.1        # FastAPI's TestClient
-numpy==2.5.5
-ruff==0.17.5

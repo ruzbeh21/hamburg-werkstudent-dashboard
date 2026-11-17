@@ -15,7 +15,7 @@ WORKDIR /app
 # CPU-only PyTorch: the default wheel bundles CUDA libraries (~2 GB) this service never uses.
 RUN pip install --index-url https://download.pytorch.org/whl/cpu torch==2.15.0
 
-COPY requirements.txt requirements-rag.txt ./
+COPY requirements.txt requirements-rag-core.txt requirements-rag.txt ./
 RUN pip install -r requirements-rag.txt
 
 # Bake the embedding model into the image: the container starts fast and needs no internet
