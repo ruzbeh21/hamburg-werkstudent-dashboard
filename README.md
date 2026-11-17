@@ -151,11 +151,116 @@ Search terms, location, radius and the request pause live in [`config.yaml`](con
 
 A push to `main` runs the tests and redeploys the dashboard without fetching new data.
 
+The daily run also updates the RAG index incrementally (only new postings are embedded) and commits `data/rag_index.db`; that step can never block the data update. A second workflow, [`rag-image.yml`](.github/workflows/rag-image.yml), builds the Docker image and smoke-tests `/health` and `/ask` whenever image code changes.
+
 Each run logs how many detail pages were fetched, cached, not found or failed; missing ones are retried twice with a fresh connection, and if fewer than 80 % of postings have their full text, the run shows a warning annotation and the dashboard says so under the skills chart. The manual **API check** workflow ([`api-check.yml`](.github/workflows/api-check.yml), [`scripts/diagnose_api.py`](scripts/diagnose_api.py)) probes the endpoints from a GitHub runner and prints only status codes.
 
 **Setup:** *Settings → Pages → Source: GitHub Actions.* No secret is required; `JOBSUCHE_API_KEY` is optional.
 
 **Why a separate `history.db`?** Raw API responses are never committed, so CI needs the database itself to remember first-seen dates across days. CI runs with `KEEP_DESCRIPTIONS=false`: description texts are used for skill extraction and then deleted, and the file is VACUUMed. The committed database therefore contains no ad texts – only the same fields the dashboard already shows. The privacy check fails the build if any text remains.
+
+## RAG Q&A Assistant
+
+Ask a question in German or English – *"Welche Firmen in Hamburg suchen Werkstudenten mit Python und Power BI?"* – and get an answer grounded in the stored postings, with the cited postings (title, company, date, link). Code in [`rag/`](rag/), tests in [`tests/rag/`](tests/rag/).
+
+```mermaid
+flowchart LR
+    H[(data/history.db)] -->|python -m rag.index| D[one document per posting<br/>structured fields only]
+    D --> E[multilingual-e5-small<br/>local embeddings]
+    E --> I[(data/rag_index.db<br/>sqlite-vec + FTS5)]
+    Q[question] --> P[query parser<br/>skills · time · work mode]
+    P --> R[hybrid retrieval<br/>vector + BM25 → RRF<br/>SQL filters]
+    I --> R
+    R -->|not confident| N["keine passenden Anzeigen gefunden"]
+    R -->|no API key or API error| O[retrieval-only answer<br/>matching postings]
+    R -->|confident| G[Claude · structured output<br/>only the retrieved postings]
+    G --> A[answer + cited postings]
+```
+
+| Step | File | Design decision |
+|---|---|---|
+| Documents | [`rag/documents.py`](rag/documents.py) | One posting = one document from the **structured fields** (title, company, district, role, skills, work mode, hours, languages, date). The public history has no ad texts by design, so none are indexed. An opt-in local mode adds scrubbed description chunks (~350 words, E5 reads 512 tokens) into a separate, git-ignored file. |
+| Embeddings | [`rag/embeddings.py`](rag/embeddings.py) | `intfloat/multilingual-e5-small`: free, local, CPU, German and English in one vector space, with the `query:` / `passage:` prefixes E5 was trained on. |
+| Index | [`rag/store.py`](rag/store.py), [`rag/index.py`](rag/index.py) | **sqlite-vec instead of Chroma**: the project already lives in SQLite, so filters are SQL joins, BM25 comes from SQLite's FTS5 in the same file, and the whole index is one ~0.5 MB file that CI commits. Exact KNN is milliseconds at this size; Chroma pays off at much larger scale. **Incremental**: a content hash per posting – only new or changed postings are re-embedded (daily run: ~5 postings), a model or schema change forces a rebuild. |
+| Query parsing | [`rag/query_parser.py`](rag/query_parser.py) | Rule-based and testable, reuses the pipeline's skill dictionary. "diese Woche" = last 7 days of *new* postings. Requested skills are relaxed from all-of to any-of, never dropped – otherwise the assistant would show unrelated postings. |
+| Retrieval | [`rag/retrieve.py`](rag/retrieve.py) | Vector search finds meaning across languages, BM25 finds exact names ("Airbus", "SAP"); **Reciprocal Rank Fusion** combines their rankings without calibrating scores. A confidence gate decides when to answer "keine passenden Anzeigen gefunden". |
+| Generation | [`rag/generate.py`](rag/generate.py) | Claude (`claude-opus-5-5`, effort `low`, configurable via `RAG_LLM_MODEL`) sees **only** the retrieved postings, wrapped and declared as data (prompt-injection guard). Structured output returns `found`, the answer and the cited numbers, so sources come from what the model used. The "nothing found" sentence is set by code, not trusted to the model. Server-side refusal fallback enabled. |
+| API | [`rag/api.py`](rag/api.py) | FastAPI with Pydantic models: `POST /ask`, `GET /health`, docs at `/docs`. Model loaded once at startup, index opened read-only per request. Question texts are never logged. |
+
+### Setup
+
+```bash
+pip install --index-url https://download.pytorch.org/whl/cpu torch==2.15.0   # Linux: skip CUDA
+pip install -r requirements-rag.txt
+python -m rag.index                     # build/update data/rag_index.db (committed daily by CI)
+export ANTHROPIC_API_KEY=...            # optional – without it: retrieval-only mode
+python -m rag.ask "Welche Werkstudentenstellen bietet Airbus im Bereich Qualität an?"
+uvicorn rag.api:app --port 8000         # http://localhost:8000/docs
+```
+
+With Docker (CPU-only PyTorch, model and index baked into the image, non-root, health check):
+
+```bash
+cp .env.example .env                    # put your key in .env (git-ignored) – optional
+docker compose up --build
+```
+
+### Example
+
+```bash
+curl -s -X POST http://localhost:8000/ask -H "Content-Type: application/json" \
+  -d '{"question": "Welche Firmen in Hamburg suchen Werkstudenten mit Python und Power BI?", "k": 3}'
+```
+
+Real response from 17 November 2026 (no API key set, so retrieval-only; shortened):
+
+```json
+{
+  "answer": "Passende Anzeigen (ohne KI-Zusammenfassung):\n1. Werkstudent im Bereich Tax / Legal Innovation & Technology (m/w/d) – Baker Tilly … (2026-10-07)",
+  "mode": "retrieval_only",
+  "sources": [{"title": "Werkstudent im Bereich Tax / Legal Innovation & Technology (m/w/d)",
+               "company": "Baker Tilly Holding GmbH Wirtschaftsprüfungs- gesellschaft",
+               "posted_date": "2026-10-07", "skills": ["KI / GenAI", "Power BI", "Power Platform", "Python"],
+               "url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1003819853-S", "…": "…"}],
+  "applied_filters": ["only postings online in the latest run", "skills (all of): python, power_bi"],
+  "confident": true,
+  "note": "ANTHROPIC_API_KEY not set – retrieval-only mode"
+}
+```
+
+With a key, `mode` is `"llm"` and `answer` is a short text citing `[1]`, `[2]`… With *"… diese Woche …"* the same question returns `"keine passenden Anzeigen gefunden"`: none of the postings published in the last 7 days mentions Python or Power BI.
+
+### Evaluation
+
+20 questions (18 answerable, 2 without answer) on a frozen snapshot of 2026-11-16 (86 current postings). Expected postings come from objective criteria, committed **before** the first run; nothing was tuned afterwards. Full report: [`rag/eval/results.md`](rag/eval/results.md), method and caveats: [`rag/eval/README.md`](rag/eval/README.md).
+
+| Variant | hit@1 | hit@3 | MRR@10 | recall@10 | no-answer rejected |
+|---|---|---|---|---|---|
+| vector only | 0.94 | 0.94 | 0.958 | 0.92 | 0.50 |
+| BM25 only | 1.00 | 1.00 | 1.000 | 0.95 | 1.00 |
+| **hybrid** | **1.00** | **1.00** | **1.000** | **0.97** | 0.50 |
+| hybrid without query filters | 0.72 | 0.83 | 0.800 | 0.87 | 0.50 |
+
+How to read it honestly: skill and time questions are solved by the parser's filters, which use the same rules as the labels, so they say little about ranking. On the 10 *search* questions (topic, role, company) hybrid reaches recall@10 0.95 vs. 0.87 (vector) and 0.91 (BM25); without the parser, hit@1 on skill/time questions falls to 0.50. Only 1 of 2 no-answer questions is rejected: "Werkstudent in einer Zahnarztpraxis" passes the similarity threshold because "Werkstudent" appears in every posting – a gap in the dev queries used to set it.
+
+```bash
+python -m rag.eval.run_eval             # rebuilds a fresh index from the snapshot and rewrites results.md
+```
+
+### Limitations
+
+- **No ad texts in the public index** – questions about tasks inside a posting only match via title, role and skills. The local `--with-descriptions` mode exists but is not evaluated yet.
+- **Small, self-written eval set** – 18 answerable questions, written by someone who knows the titles (favours BM25); 2 no-answer questions are not enough to judge the gate.
+- **Confidence gate** – heuristic; the vector part is too lax for queries containing domain words (see above).
+- **Generation with a real API key is covered by mocked tests**, not by a recorded evaluation of answer quality.
+- **Not hosted** – GitHub Pages is static; the API runs locally or in Docker.
+
+### Next steps
+
+- New dev queries containing domain words, re-set the confidence gate, then add fresh held-out no-answer questions.
+- Evaluate answer faithfulness (are all claims backed by cited postings?) with a small LLM-graded set.
+- Evaluate the description mode against the structured-only index.
+- Host the API (e.g. a small container service) and add a question box to the dashboard.
 
 ## Privacy
 
@@ -181,17 +286,20 @@ Each run logs how many detail pages were fetched, cached, not found or failed; m
 ├── dictionaries/            skills.yaml, roles.yaml, hamburg_districts.yaml
 ├── queries/                 schema.sql + one .sql file per metric
 ├── src/                     collect, clean, skills, db, analyse, config
-├── scripts/check_privacy.py pre-publish check
-├── tests/                   pytest suite (86 tests)
+├── rag/                     RAG assistant: index, retrieval, generation, API, eval/
+├── scripts/check_privacy.py pre-publish check (also inspects the published SQLite files)
+├── tests/                   pytest suite (181 tests, RAG tests in tests/rag/)
 ├── docs/                    the dashboard (GitHub Pages root) + data/*.json
 ├── data/history.db          CI history (no ad texts); data/raw/ and data/jobs.db stay local
+├── data/rag_index.db        RAG index (structured fields only), updated daily by CI
+├── Dockerfile, docker-compose.yml
 ├── run.py, Makefile
-└── .github/workflows/pipeline.yml
+└── .github/workflows/      pipeline.yml (daily data + deploy), rag-image.yml (Docker smoke test)
 ```
 
 ## Testing
 
-`make test` runs 86 pytest tests, including:
+`make test` runs 181 pytest tests (86 for the pipeline and dashboard export, 95 for the RAG assistant – offline embedder and mocked LLM, no API key needed), including:
 
 - **cleaning edge cases:** gender markers in titles (`Werkstudent*in`, `(m/w/d)`, `(gn)`), company suffixes ("Werk Bremen", "Abteilung …"), HTML entities, hours like "19,5 Std." or "zwischen 3 und 19,5", semester-break and internship clauses, multi-location postings
 - **deduplication:** across search terms, across runs, and monthly re-posts with new reference numbers
@@ -215,11 +323,11 @@ Each run logs how many detail pages were fetched, cached, not found or failed; m
 
 **Deutsch:**
 > **Werkstudenten-Jobmarkt Hamburg – Daten-Dashboard** (Python, SQL/SQLite, Plotly, GitHub Actions): Automatisierte Pipeline, die täglich Stellenanzeigen über die Jobsuche-API der Bundesagentur für Arbeit sammelt, bereinigt, dedupliziert und datenschutzkonform in SQLite speichert.
-> Skill-Analyse mit transparentem Keyword-Wörterbuch und SQL-Abfragen, veröffentlicht als zweisprachiges, interaktives Dashboard auf GitHub Pages; 86 pytest-Tests.
+> Skill-Analyse mit transparentem Keyword-Wörterbuch und SQL-Abfragen, veröffentlicht als zweisprachiges, interaktives Dashboard auf GitHub Pages; 181 pytest-Tests.
 
 **English:**
 > **Hamburg Working-Student Job Market Dashboard** (Python, SQL/SQLite, Plotly, GitHub Actions): Automated pipeline that collects job postings daily from the German Federal Employment Agency's API, then cleans, deduplicates and stores them privacy-safely in SQLite.
-> Skill analysis with a transparent keyword dictionary and plain SQL, published as a bilingual interactive dashboard on GitHub Pages; 86 pytest tests.
+> Skill analysis with a transparent keyword dictionary and plain SQL, published as a bilingual interactive dashboard on GitHub Pages; 181 pytest tests.
 
 ## Attribution
 
