@@ -35,6 +35,16 @@ class Settings:
     # Description chunks: E5 reads at most 512 tokens; ~350 words keeps German text below that.
     chunk_words: int = 350
     chunk_overlap: int = 50
+    # Generation. The key is only ever read from the environment, never from a file.
+    llm_model: str = field(default_factory=lambda: os.environ.get("RAG_LLM_MODEL") or "claude-opus-5-5")
+    # Short grounded answers over a handful of postings need little reasoning.
+    llm_effort: str = field(default_factory=lambda: os.environ.get("RAG_LLM_EFFORT") or "low")
+    top_k: int = field(default_factory=lambda: int(os.environ.get("RAG_TOP_K") or 6))
+
+    @property
+    def api_key_present(self) -> bool:
+        """Generation runs only with ANTHROPIC_API_KEY set; otherwise retrieval-only mode."""
+        return bool(os.environ.get("ANTHROPIC_API_KEY"))
 
 
 def get_settings() -> Settings:
