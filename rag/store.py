@@ -80,6 +80,18 @@ def connect(path: Path) -> sqlite3.Connection:
     return conn
 
 
+def connect_readonly(path: Path) -> sqlite3.Connection:
+    """Open an existing index read-only (the API never writes and must not create a file)."""
+    if not path.exists():
+        raise FileNotFoundError(f"index not found: {path} – run `python -m rag.index` first")
+    conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+    conn.row_factory = sqlite3.Row
+    conn.enable_load_extension(True)
+    sqlite_vec.load(conn)
+    conn.enable_load_extension(False)
+    return conn
+
+
 def get_meta(conn: sqlite3.Connection, key: str) -> str | None:
     """Read one value from the meta table, if the table exists."""
     try:
