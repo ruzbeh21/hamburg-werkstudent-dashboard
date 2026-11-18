@@ -33,8 +33,10 @@ jobs:
         run: docker run -d --name rag -p 8000:8000 hamburg-werkstudent-rag
 
       - name: Health check
+        # While the model loads, Docker's port proxy accepts connections and then resets them
+        # (curl error 56), which --retry-connrefused does not cover – hence --retry-all-errors.
         run: |
-          curl --fail --silent --show-error --retry 40 --retry-connrefused --retry-delay 3 \
+          curl --fail --silent --show-error --retry 60 --retry-all-errors --retry-delay 3 \
             http://localhost:8000/health | tee health.json
           python3 -c "import json; h = json.load(open('health.json')); assert h['status'] == 'ok' and h['index']['postings'] > 0, h"
 
@@ -51,6 +53,8 @@ jobs:
       - name: Image size
         run: docker image ls hamburg-werkstudent-rag --format "{{.Repository}} {{.Size}}"
 
-      - name: Container logs
+      - name: Container status and logs
         if: always()
-        run: docker logs rag
+        run: |
+          docker ps --all --filter name=rag --format "{{.Names}}: {{.Status}}"
+          docker logs rag
