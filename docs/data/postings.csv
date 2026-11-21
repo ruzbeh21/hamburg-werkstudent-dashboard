@@ -1,4 +1,5 @@
 posting_id,title,company,district,posted_date,role_category,work_mode,hours_max,german_level,source_url,skills
+125,Werkstudent (m/w/d) Learning Management & Digital Content,Gebr. Heinemann SE & Co. KG,Hamburg-Mitte,2026-11-20,other,not_stated,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1004050014-S,KI / GenAI
 122,Werkstudent (d/m/w) - Einkauf - Account Management Hamburg,Airbus Operations GmbH,Hamburg-Mitte,2026-11-19,other,hybrid,18,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/16947-984767696-S,BI / Reporting
 123,Werkstudent (m/w/d) - Veranstaltungsmanagement,Fagron GmbH,Glinde,2026-11-19,other,hybrid,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1004042206-S,"Excel, MS Office / M365"
 124,Werkstudent (m/w/d) Fund Annual Reports,HANSAINVEST -Hanseatische Investment-GmbH,Hamburg-Nord,2026-11-19,other,hybrid,,,https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1004041067-S,
@@ -57,13 +58,14 @@ posting_id,title,company,district,posted_date,role_category,work_mode,hours_max,
 48,Werkstudent E-Commerce / Marktplatzmanagement (m/w/d),Webdigital GmbH,Hamburg-Mitte,2026-08-30,other,not_stated,20,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1003622299-S,Excel
 49,Werkstudent (d/m/w) Chief of Staff Office,Airbus Operations GmbH,Hamburg-Mitte,2026-08-27,other,hybrid,18,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/16947-966674106-S,KI / GenAI
 50,EY-Parthenon Werkstudent Decision Modelling & Economics (w/m/d),EY Strategy & Transactions GmbH,Eimsbüttel,2026-08-24,other,not_stated,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/15548-1434332-3-S,"Agile / Scrum, KI / GenAI, MS Office / M365"
+51,Werkstudent Sales Development (m/w/d),Comdesk GmbH,Hamburg,2026-08-21,other,hybrid,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1003578335-S,
 52,Working Student Brand Marketing (gn),The Quality Group GmbH,Hamburg-Mitte,2026-08-20,other,hybrid,20,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/12951-951357fa-ec28-4e55--S,"Agile / Scrum, BI / Reporting"
 53,Werkstudent (m/w/d) im Qualitätsmanagement,CHEFS CULINAR Nord GmbH & Co. KG,Eimsbüttel,2026-08-19,other,not_stated,20,,https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1003568026-S,
 54,Werkstudent Softwareentwicklung (m/w/d),Nidobirds Ventures GmbH,Hamburg-Mitte,2026-08-17,software,hybrid,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/14081-JOB-821870-S,JavaScript / TypeScript
 58,Werkstudent Sales & Marketing (w/m/d),PlantaCorp GmbH,Altona,2026-08-05,other,not_stated,20,mentioned,https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1003495939-S,"KI / GenAI, MS Office / M365"
 56,Werkstudent*in Produktmanagement (m/w/d),ENQT GmbH,Hamburg-Mitte,2026-08-05,other,not_stated,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/20279-k62365.1101-S,Netzwerke
 55,Werkstudent*in Technische Dokumentation (m/w/d),ENQT GmbH,Hamburg-Mitte,2026-08-05,other,not_stated,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/20279-k62365.1110-S,Netzwerke
-57,Werkstudent*in Test Engineering & Messtechnik (m/w/d),ENQT GmbH,Hamburg-Mitte,2026-08-05,software,not_stated,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/20279-k62365.1098-S,Netzwerke
+57,Werkstudent*in Test Engineering & Messtechnik (m/w/d),ENQT GmbH,Hamburg-Mitte,2026-08-05,software,not_stated,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/20279-k62365.1113-S,Netzwerke
 59,Werkstudent (m/w/d) - Arbeitsrecht,Nexperia Germany GmbH,Eimsbüttel,2026-07-30,other,not_stated,18,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1003470281-S,
 60,Werkstudent Elektrotechnik (m/w/d),TKMS ATLAS ELEKTRONIK GmbH,Wedel,2026-07-16,other,hybrid,,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/16604-965412-008-S,Excel
 61,Werkstudent (d/m/w) im Bereich Prozessplanung,Airbus Operations GmbH,Hamburg-Mitte,2026-07-08,other,not_stated,18,C1,https://www.arbeitsagentur.de/jobsuche/jobdetail/16947-956069658-S,
